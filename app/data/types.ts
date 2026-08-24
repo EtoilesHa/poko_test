@@ -52,6 +52,7 @@ export type Question = {
 
 export type ScoreBreakdown = {
   total: number;
+  rawTotal: number;
   favorites: number;
   flavor: number;
   environment: number;

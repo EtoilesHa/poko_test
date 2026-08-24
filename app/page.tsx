@@ -43,6 +43,9 @@ export default function Home() {
   );
   const winner = ranked[0];
   const runnersUp = ranked.slice(1, 3);
+  const leadOverRunner = winner && runnersUp[0]
+    ? Math.max(0, winner.score.rawTotal - runnersUp[0].score.rawTotal)
+    : 0;
   const selectedOptions = answers[currentQuestion.id] ?? [];
   const progress = Math.round((questionIndex / QUESTIONS.length) * 100);
   const directMatches = winner ? [
@@ -53,7 +56,7 @@ export default function Home() {
   ].filter((item) => item.values.length > 0) : [];
   const winnerReason = directMatches.length
     ? `以上标签均是你与 ${winner?.name ?? '这位宝可梦'} 在 Pokopia 图鉴里的直接重合项。`
-    : `这位宝可梦与你的图鉴标签重合较少，但在已选维度中的总分仍然最高。`;
+    : `这位宝可梦与你的图鉴标签重合较少，但在稀有度加权后的图鉴契合指数中仍然最高。`;
 
   function beginQuiz() {
     setAnswers({});
@@ -171,8 +174,9 @@ export default function Home() {
               <p className="type-row">{winner.types.map((type) => <span key={type}>{type}</span>)}</p>
               <p className="winner-tagline">{winner.tagline}</p>
               <div className="reason-box"><span>图鉴直连</span>{directMatches.map((match) => <p key={match.label}><b>{match.label}：</b>{match.values.join('、')}</p>)}<p>{winnerReason}</p></div>
+              <p className="match-lead">{leadOverRunner >= 1 ? `比第二名领先 ${leadOverRunner.toFixed(1)} 个图鉴指数` : '与第二名的图鉴偏好非常接近'}</p>
             </div>
-            <div className="match-score" aria-label={`匹配度 ${winner.score.total}%`}><strong>{winner.score.total}</strong><span>匹配度</span></div>
+            <div className="match-score" aria-label={`图鉴契合指数 ${winner.score.total}`}><strong>{winner.score.total}</strong><span>图鉴契合</span></div>
           </article>
           <div className="result-actions"><button className="primary-button" onClick={shareResult}>{copied ? '已复制分享文案！' : '分享我的结果 ↗'}</button><button className="secondary-button" onClick={beginQuiz}>再测一次</button></div>
           <section className="runner-section" aria-labelledby="runner-title">
@@ -181,13 +185,13 @@ export default function Home() {
               {runnersUp.map((pokemon, index) => (
                 <article className="runner-card" key={pokemon.id}>
                   <span className="rank">0{index + 2}</span><span className={`mini-orb mini-orb-${index}`} aria-hidden="true">◡</span>
-                  <div><span className="runner-group">{GROUP_LABELS[pokemon.group]}</span><h3>{pokemon.name}</h3><p>{pokemon.score.matchedFavorites.slice(0, 2).join(' · ')}</p></div>
-                  <strong>{pokemon.score.total}%</strong>
+                  <div><span className="runner-group">{GROUP_LABELS[pokemon.group]}</span><h3>{pokemon.name}</h3><p>{pokemon.score.matchedFavorites.slice(0, 2).join(' · ')} · 图鉴契合</p></div>
+                  <strong>{pokemon.score.total}</strong>
                 </article>
               ))}
             </div>
           </section>
-          <aside className="method-note"><span>每张物品卡都是 Pokopia 中实际存在的道具；卡片下方会显示它关联的图鉴喜好、口味、理想环境或特长。</span><span>结果池已接入 365 条公开图鉴记录：本篇、DLC 海底、活动，以及其中的传说／幻之宝可梦都会正常参与匹配。</span></aside>
+          <aside className="method-note"><span>每张物品卡都是 Pokopia 中实际存在的道具；卡片下方会显示它关联的图鉴喜好、口味、理想环境或特长。稀有的重合标签会有更高区分度。</span><span>结果池已接入 365 条公开图鉴记录：本篇、DLC 海底、活动，以及其中的传说／幻之宝可梦都会正常参与匹配。</span></aside>
         </section>
       )}
       <footer>Pokémon 与相关名称属于其权利人。本项目为非官方、非商业性质的粉丝趣味测试。</footer>
