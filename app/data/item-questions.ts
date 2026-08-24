@@ -40,7 +40,7 @@ const one = (id: string, eyebrow: string, prompt: string, hint: string, options:
  */
 export const ITEM_QUESTIONS: Question[] = [
   one('flower-bed', '小屋花圃', '要在门口种一丛花，你最想选哪一种？', '没有盆花；这里收齐了 Pokopia 的野生与各地花朵，只比较花的样子与生长地。', [
-    item('wildflowers', '草地的花', { favorites: { '自然': 2, '花朵': 2 } }),
+    item('wildflowers', '草地的花', { favorites: { '自然': 2, '花朵': 2 }, specialties: { '采蜜': 1 } }),
     item('cute-flowers', '可爱的花', { favorites: { '可爱': 2, '柔软': 1, '花朵': 1 } }),
     item('elegant-flower', '优雅的花', { favorites: { '豪华': 1, '观赏': 2, '花朵': 1 } }),
     item('robust-flower', '坚韧的花', { favorites: { '坚硬': 1, '花朵': 2 } }),
@@ -157,12 +157,14 @@ export const ITEM_QUESTIONS: Question[] = [
     item('cycle-shop-sign', '自行车店招牌', { favorites: { '运动': 2, '交通工具': 1 } }),
     item('caf-sign', '咖啡店招牌', { favorites: { '文字': 1, '观赏': 1 } }),
   ]),
-  one('food-counter', '食品柜台', '食品柜台前，你最想先拿哪样尝一口？', '这一页全部都是 Pokopia 里的可吃小食。', [
-    item('honey', '甜甜蜜', { favorites: { '美食': 3 }, specialties: { '采蜜': 1, '贪吃鬼': 1 } }),
-    item('rare-candy', '神奇糖果', { favorites: { '美食': 2, '豪华': 1 }, specialties: { '稀有化': 1 } }),
-    item('recycled-bread', '重制面包', { favorites: { '美食': 1, '垃圾': 1 }, specialties: { '回收利用': 1 } }),
-    item('bread-bowl', '热腾腾浓汤面包', { favorites: { '美食': 3 } }),
-    item('carrot-bread', '红萝卜面包', { favorites: { '美食': 2, '自然': 1 } }),
+  one('bread-counter', '面包柜台', '烤箱刚出炉，你最想先拿哪一种面包？', '选项全部是 Pokopia 中可直接食用的面包，包含 DLC 的西瓜面包。', [
+    item('simple-bread', '普通面包', { favorites: { '美食': 3 } }),
+    item('leppa-bread', '辣木果面包', { favorites: { '美食': 2 }, flavors: { '酸': 1 } }),
+    item('carrot-bread', '红萝卜面包', { favorites: { '美食': 2, '自然': 1 }, flavors: { '辣': 1 } }),
+    item('recycled-bread', '重制面包', { favorites: { '美食': 1, '垃圾': 1 }, flavors: { '苦': 1 }, specialties: { '回收利用': 1 } }),
+    item('fluffy-bread', '松软面包', { favorites: { '美食': 2, '柔软': 1 }, flavors: { '甜': 1 } }),
+    item('bread-bowl', '浓汤面包', { favorites: { '美食': 3 }, flavors: { '辣': 1 } }),
+    item('watermelon-bread', '西瓜面包', { favorites: { '美食': 2, '水': 1, '缤纷': 1 }, flavors: { '甜': 1 } }),
   ]),
   one('vehicles', '交通工具库', '外岛出行只能挑一台载具，你想先试哪台？', '选项全部是 Pokopia 的交通工具。', [
     item('bike', '自行车', { favorites: { '运动': 2, '交通工具': 2 } }),
@@ -181,6 +183,7 @@ export const ITEM_QUESTIONS: Question[] = [
   one('curio-case', '珍奇展柜', '博物馆展柜只能留一件，你会盯着哪一件看？', '这一页都是可以摆进珍奇展柜的收藏与展品。', [
     item('sharp-beak', '锐利鸟嘴', { favorites: { '尖尖': 3 }, specialties: { '鉴定': 1 } }),
     item('fairy-feather', '妖精之翼', { favorites: { '风': 1, '闪亮': 1 }, specialties: { '飞翔': 1 } }),
+    item('rare-candy', '神奇糖果', { favorites: { '豪华': 2, '奇妙': 1 }, specialties: { '稀有化': 1 } }),
     item('mysterious-statue', '谜之石像', { favorites: { '诡异': 2, '奇妙': 1 }, specialties: { '瞬间移动': 1 } }),
     item('ditto-transform-print', '百变怪变身花纹', { favorites: { '奇妙': 2 }, specialties: { '变身': 1 } }),
     item('armor-fossil', '盾甲化石', { favorites: { '坚硬': 1, '石制': 1 }, specialties: { '找东西': 1, '鉴定': 1 } }),
