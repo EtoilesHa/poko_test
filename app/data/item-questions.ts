@@ -76,12 +76,13 @@ export const ITEM_QUESTIONS: Question[] = [
     item('storage-box', '收纳箱', { favorites: { '容器': 2, '方方': 1, '整洁': 1 }, specialties: { '收纳': 1 } }),
     item('wall-storage-box', '壁挂收纳箱', { favorites: { '容器': 2, '方方': 1, '建设': 1 }, specialties: { '收纳': 1 } }),
   ]),
-  one('game-room', '游戏室设备', '要给游戏室补一台设备，你先选哪台？', '这一页都是会发声或通电的娱乐设备。', [
-    item('speaker', '音箱', { favorites: { '音乐': 3, '热闹': 1 }, specialties: { '带动气氛': 1 } }),
-    item('gaming-pc', '电竞电脑', { favorites: { '机械': 3, '玩乐': 2 } }),
-    item('cool-electric-guitar', '酷炫电吉他', { favorites: { '金属': 1, '音乐': 3 } }),
-    item('audio-mixer', '音响混音器', { favorites: { '机械': 1, '音乐': 2 }, specialties: { 'DJ': 1 } }),
-    item('gaming-light', '电竞灯饰', { favorites: { '机械': 2, '玩乐': 1 }, specialties: { '发光': 1 } }),
+  one('garden-seating', '庭院座椅试坐会', '庭院里只留一把座椅，你想先坐哪一张？', '选项全部是 Pokopia 中可坐的椅子、坐垫或长椅；不含已经在另一题比较过的沙发。', [
+    item('garden-chair', '庭园椅', { favorites: { '自然': 2, '木制': 2, '花朵': 1 } }),
+    item('iron-chair', '铁质椅', { favorites: { '金属': 2, '坚硬': 2, '建设': 1 } }),
+    item('log-chair', '原木椅', { favorites: { '木制': 2, '自然': 2, '坚硬': 1 } }),
+    item('public-seat', '公共长椅', { favorites: { '金属': 1, '整洁': 2, '方方': 1 } }),
+    item('soft-seat', '柔软坐垫', { favorites: { '柔软': 3, '可爱': 1 } }),
+    item('stone-bench', '石制长椅', { favorites: { '石制': 2, '坚硬': 2, '自然': 1 } }),
   ]),
   one('berry-taste', '树果偏好', '果树成熟了，你会先摘哪一颗？', '每颗都是 Pokopia 中的真实树果，并对应图鉴口味。', [
     item('pecha-berry', '桃桃果', { flavors: { '甜': 1 } }),
