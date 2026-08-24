@@ -73,7 +73,7 @@ export const ITEM_QUESTIONS: Question[] = [
     item('plain-chest', '自然风储物柜', { favorites: { '自然': 1, '木制': 2, '容器': 1 }, specialties: { '收纳': 1 } }),
     item('pok-ball-chest', '精灵球储物柜', { favorites: { '可爱': 1, '圆润': 2, '容器': 2 }, specialties: { '收纳': 1 } }),
     item('safe', '保险箱', { favorites: { '金属': 2, '坚硬': 1, '容器': 1 }, specialties: { '收藏家': 1 } }),
-    item('storage-box', '收纳箱', { favorites: { '容器': 2, '方方': 1, '整洁': 1 }, specialties: { '收纳': 1 } }),
+    item('berry-basket', '树果收纳箱', { favorites: { '容器': 2, '美食': 1, '自然': 1 }, specialties: { '收纳': 1 } }),
     item('wall-storage-box', '壁挂收纳箱', { favorites: { '容器': 2, '方方': 1, '建设': 1 }, specialties: { '收纳': 1 } }),
   ]),
   one('hobby-room', '兴趣活动室', '要给兴趣活动室添一件物品，你先摆哪一件？', '这一页都是放进个人兴趣角的娱乐、创作或收藏物件：电脑、音乐设备、玩具、派对摆件与画作。', [
