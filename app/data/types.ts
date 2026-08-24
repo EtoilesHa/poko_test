@@ -32,6 +32,11 @@ export type QuestionOption = AnswerWeights & {
   emoji?: string;
   image?: string;
   imageAlt?: string;
+  sceneItems?: Array<{
+    image: string;
+    imageAlt: string;
+    title: string;
+  }>;
 };
 
 export type Question = {

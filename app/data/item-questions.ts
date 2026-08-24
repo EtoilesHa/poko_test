@@ -1,12 +1,25 @@
 import type { AnswerWeights, Question, QuestionOption } from './types';
 import { itemImage } from './item-images';
 
-const item = (id: string, title: string, weights: AnswerWeights): QuestionOption => ({
+type SceneItem = { id: string; title: string };
+
+const item = (
+  id: string,
+  title: string,
+  weights: AnswerWeights,
+  description = 'Pokopia 道具图鉴',
+  sceneItems?: SceneItem[],
+): QuestionOption => ({
   id,
   title,
-  description: 'Pokopia 道具图鉴',
+  description,
   image: itemImage(id),
   imageAlt: `${title}的 Pokopia 道具图`,
+  sceneItems: sceneItems?.map((sceneItem) => ({
+    image: itemImage(sceneItem.id),
+    imageAlt: `${sceneItem.title}的 Pokopia 道具图`,
+    title: sceneItem.title,
+  })),
   ...weights,
 });
 
@@ -77,13 +90,37 @@ export const ITEM_QUESTIONS: Question[] = [
     item('rawst-berry', '莓莓果', { flavors: { '苦': 1 } }),
     item('chesto-berry', '零余果', { flavors: { '涩': 1 } }),
   ]),
-  one('garden-landscape', '庭院地景', '要为庭院铺一块自然地景，你选哪种地貌？', '选项都是能作为庭院背景的天然地面或岩石。', [
-    item('light-brown-rock', '淡褐色岩石', { environments: { '明亮': 1 } }),
-    item('damp-rock', '潮湿岩石', { environments: { '湿润': 1 } }),
-    item('heat-rock', '炽热岩石', { environments: { '温暖': 1 } }),
-    item('beach-sand', '海边的沙子', { environments: { '干燥': 1 } }),
-    item('cave-rock', '洞窟岩石', { environments: { '昏暗': 1 } }),
-    item('icy-rock', '冰冷岩石', { environments: { '凉爽': 1 } }),
+  one('garden-scenes', '庭院一日', '今天的庭院，你最想过成哪一种场景？', '每张卡都包含天气、地景和三件 Pokopia 布置物；选择你最想待上一整天的那一套。', [
+    item('wildflowers', '晴天草坪野餐', { environments: { '明亮': 1 }, favorites: { '自然': 2, '花朵': 2, '木制': 1 } }, '天气：晴朗微风 · 布置：草地花、庭园椅、派对壁饰', [
+      { id: 'wildflowers', title: '草地花' },
+      { id: 'garden-chair', title: '庭园椅' },
+      { id: 'party-bunting', title: '派对壁饰' },
+    ]),
+    item('damp-rock', '细雨蘑菇角', { environments: { '湿润': 1 }, favorites: { '自然': 2, '奇妙': 1, '石制': 1 } }, '天气：细雨绵绵 · 布置：潮湿岩石、发光蘑菇、蘑菇台灯', [
+      { id: 'damp-rock', title: '潮湿岩石' },
+      { id: 'glowing-mushrooms', title: '发光蘑菇' },
+      { id: 'mushroom-lamp', title: '蘑菇台灯' },
+    ]),
+    item('beach-sand', '暖阳海滨午后', { environments: { '干燥': 1 }, favorites: { '水': 1, '海': 2, '柔软': 1 } }, '天气：晴朗干燥的海风 · 布置：海边沙地、海滨花、度假沙发', [
+      { id: 'beach-sand', title: '海边沙地' },
+      { id: 'seashore-flowers', title: '海滨花' },
+      { id: 'resort-sofa', title: '度假沙发' },
+    ]),
+    item('skyland-flowers', '风起空岛花园', { environments: { '温暖': 1 }, favorites: { '风': 2, '花朵': 1, '机械': 1 } }, '天气：晴暖有风 · 布置：空岛花、风车套组、庭园椅', [
+      { id: 'skyland-flowers', title: '空岛花' },
+      { id: 'windmill-kit', title: '风车套组' },
+      { id: 'garden-chair', title: '庭园椅' },
+    ]),
+    item('cave-rock', '暮色洞窟营地', { environments: { '昏暗': 1 }, favorites: { '石制': 2, '火': 1, '诡异': 1 }, specialties: { '点火': 1 } }, '天气：阴云傍晚 · 布置：洞窟岩石、火堆、提灯', [
+      { id: 'cave-rock', title: '洞窟岩石' },
+      { id: 'campfire', title: '火堆' },
+      { id: 'lantern', title: '提灯' },
+    ]),
+    item('icy-rock', '清冷夜灯庭院', { environments: { '凉爽': 1 }, favorites: { '闪亮': 2, '火': 1, '观赏': 1 } }, '天气：清冷夜晚 · 布置：冰冷岩石、装饰灯串、细长蜡烛', [
+      { id: 'icy-rock', title: '冰冷岩石' },
+      { id: 'string-lights', title: '装饰灯串' },
+      { id: 'slender-candle', title: '细长蜡烛' },
+    ]),
   ]),
   one('island-errand', '岛屿委托单', '今天只能发布一张委托单，你最想完成哪件事？', '选项都是同一类的岛屿委托，任务与图鉴「特长」对应。', [
     item('garden-flowers', '让庭园盆花快快长大', { specialties: { '栽培': 1 } }),

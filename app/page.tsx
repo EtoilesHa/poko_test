@@ -134,13 +134,22 @@ export default function Home() {
             <div className="item-option-grid">
               {currentQuestion.options.map((option) => (
                 <button
-                  className={`item-option${selectedOptions.some((item) => item.id === option.id) ? ' is-selected' : ''}`}
+                  className={`item-option${selectedOptions.some((item) => item.id === option.id) ? ' is-selected' : ''}${option.sceneItems ? ' is-scene' : ''}`}
                   key={option.id}
                   onClick={() => toggleOption(option)}
                   aria-pressed={selectedOptions.some((item) => item.id === option.id)}
                   disabled={currentQuestion.maxSelections > 1 && !selectedOptions.some((item) => item.id === option.id) && selectedOptions.length >= currentQuestion.maxSelections}
                 >
-                  <span className="item-image-wrap"><img src={option.image} alt={option.imageAlt ?? ''} /></span>
+                  {option.sceneItems?.length ? (
+                    <span className="scene-image-wrap">
+                      {option.sceneItems.map((sceneItem) => (
+                        <span className="scene-image" key={sceneItem.title}>
+                          <img src={sceneItem.image} alt={sceneItem.imageAlt} />
+                          <small>{sceneItem.title}</small>
+                        </span>
+                      ))}
+                    </span>
+                  ) : <span className="item-image-wrap"><img src={option.image} alt={option.imageAlt ?? ''} /></span>}
                   <span className="item-copy"><strong>{option.title}</strong><small>{option.description}</small><span className="item-links"><b>对应图鉴</b>{optionLinks(option).map((label) => <i key={label}>{label}</i>)}</span></span>
                 </button>
               ))}

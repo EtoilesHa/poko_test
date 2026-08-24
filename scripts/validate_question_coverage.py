@@ -73,7 +73,7 @@ def main() -> int:
         if unknown:
             failures.append(f"{catalogue_field}: unknown {'、'.join(unknown)}")
 
-    item_ids = set(re.findall(r"item\('([^']+)'", question_source))
+    item_ids = set(re.findall(r"(?:item\('|id:\s*')([^']+)'", question_source))
     missing_images = sorted(item_id for item_id in item_ids if not (ITEMS_PATH / f"{item_id}.png").is_file())
     invalid_images = sorted(
         item_id for item_id in item_ids
