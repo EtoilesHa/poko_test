@@ -1,0 +1,149 @@
+import type { AnswerWeights, Question, QuestionOption } from './types';
+import { itemImage } from './item-images';
+
+const item = (id: string, title: string, weights: AnswerWeights): QuestionOption => ({
+  id,
+  title,
+  description: 'Pokopia 道具图鉴',
+  image: itemImage(id),
+  imageAlt: `${title}的 Pokopia 道具图`,
+  ...weights,
+});
+
+const one = (id: string, eyebrow: string, prompt: string, hint: string, options: QuestionOption[]): Question => ({
+  id,
+  eyebrow,
+  prompt,
+  hint,
+  minSelections: 1,
+  maxSelections: 1,
+  presentation: 'items',
+  options,
+});
+
+/**
+ * Each card is a real Pokopia item. The AnswerWeights below are the explicit
+ * Pokédex labels represented by that item, and are shown below every card.
+ */
+export const ITEM_QUESTIONS: Question[] = [
+  one('flower-bed', '小屋花圃', '要在门口种一丛花，你最想选哪一种？', '没有盆花；这里收齐了 Pokopia 的野生与各地花朵，只比较花的样子与生长地。', [
+    item('wildflowers', '草地的花', { favorites: { '自然': 2, '花朵': 2 } }),
+    item('cute-flowers', '可爱的花', { favorites: { '可爱': 2, '柔软': 1, '花朵': 1 } }),
+    item('elegant-flower', '优雅的花', { favorites: { '豪华': 1, '观赏': 2, '花朵': 1 } }),
+    item('robust-flower', '坚韧的花', { favorites: { '坚硬': 1, '花朵': 2 } }),
+    item('seashore-flowers', '海边的花', { favorites: { '水': 1, '海': 2, '花朵': 1 } }),
+    item('seabed-flowers', '海底的花', { favorites: { '水': 2, '海': 1, '花朵': 1 } }),
+    item('skyland-flowers', '空岛的花', { favorites: { '风': 2, '花朵': 1 } }),
+    item('mountain-flowers', '岩地的花', { favorites: { '大地': 2, '石制': 1, '花朵': 1 } }),
+    item('beautiful-flower', '美丽的花', { favorites: { '缤纷': 2, '观赏': 2, '花朵': 1 } }),
+    item('extravagant-flowers', '豪华的花', { favorites: { '豪华': 2, '缤纷': 1, '花朵': 1 } }),
+    item('dandy-flowers', '悠闲花', { favorites: { '自然': 1, '花朵': 2 } }),
+  ]),
+  one('seating', '座位陈列室', '同一排座位里，你会把哪一张搬回家？', '只比较座位的材质、手感与风格。', [
+    item('soft-seat', '软绵绵椅子', { favorites: { '柔软': 3, '圆润': 1 } }),
+    item('cute-sofa', '可爱沙发', { favorites: { '可爱': 3, '柔软': 1 } }),
+    item('iron-chair', '铁椅子', { favorites: { '金属': 3, '坚硬': 1 } }),
+    item('stone-bench', '石长椅', { favorites: { '石制': 3, '坚硬': 1 } }),
+    item('log-chair', '圆木椅子', { favorites: { '自然': 1, '木制': 3 } }),
+    item('public-seat', '公共座椅', { favorites: { '共享': 3, '热闹': 1 } }),
+  ]),
+  one('display-furniture', '展示家具馆', '展厅要添一件展示家具，你会先挑哪一个？', '选项全是储物、陈列或展示用的家具；只比较柜体的风格与用途。', [
+    item('decorative-bookshelf', '装饰书架', { favorites: { '文字': 2, '知识': 3 } }),
+    item('shop-display-case', '商店展示柜', { favorites: { '玻璃': 3, '观赏': 1, '容器': 1 } }),
+    item('marine-chest', '大海储物柜', { favorites: { '水': 1, '海': 2, '容器': 2 } }),
+    item('pok-ball-chest', '精灵球储物柜', { favorites: { '可爱': 1, '圆润': 2, '容器': 2 } }),
+    item('star-closet', '星星衣柜', { favorites: { '闪亮': 2, '象征': 1, '豪华': 1 } }),
+    item('big-treasure-chest', '大宝箱', { favorites: { '豪华': 1, '容器': 2 }, specialties: { '找东西': 1, '收藏家': 1 } }),
+    item('polygonal-shelf', '棱棱角角柜', { favorites: { '方方': 2, '尖尖': 1, '容器': 1 } }),
+    item('iron-stand', '铁矮柜', { favorites: { '金属': 2, '坚硬': 2 } }),
+  ]),
+  one('game-room', '游戏室设备', '要给游戏室补一台设备，你先选哪台？', '这一页都是会发声或通电的娱乐设备。', [
+    item('speaker', '音箱', { favorites: { '音乐': 3, '热闹': 1 }, specialties: { '带动气氛': 1 } }),
+    item('gaming-pc', '电竞电脑', { favorites: { '机械': 3, '玩乐': 2 } }),
+    item('cool-electric-guitar', '酷炫电吉他', { favorites: { '金属': 1, '音乐': 3 } }),
+    item('audio-mixer', '音响混音器', { favorites: { '机械': 1, '音乐': 2 }, specialties: { 'DJ': 1 } }),
+    item('gaming-light', '电竞灯饰', { favorites: { '机械': 2, '玩乐': 1 }, specialties: { '发光': 1 } }),
+  ]),
+  one('berry-taste', '树果偏好', '果树成熟了，你会先摘哪一颗？', '每颗都是 Pokopia 中的真实树果，并对应图鉴口味。', [
+    item('pecha-berry', '桃桃果', { flavors: { '甜': 1 } }),
+    item('aspear-berry', '利木果', { flavors: { '酸': 1 } }),
+    item('leppa-berry', '苹野果', { flavors: { '辣': 1 } }),
+    item('rawst-berry', '莓莓果', { flavors: { '苦': 1 } }),
+    item('chesto-berry', '零余果', { flavors: { '涩': 1 } }),
+  ]),
+  one('garden-landscape', '庭院地景', '要为庭院铺一块自然地景，你选哪种地貌？', '选项都是能作为庭院背景的天然地面或岩石。', [
+    item('light-brown-rock', '淡褐色岩石', { environments: { '明亮': 1 } }),
+    item('damp-rock', '潮湿岩石', { environments: { '湿润': 1 } }),
+    item('heat-rock', '炽热岩石', { environments: { '温暖': 1 } }),
+    item('beach-sand', '海边的沙子', { environments: { '干燥': 1 } }),
+    item('cave-rock', '洞窟岩石', { environments: { '昏暗': 1 } }),
+    item('icy-rock', '冰冷岩石', { environments: { '凉爽': 1 } }),
+  ]),
+  one('island-errand', '岛屿委托单', '今天只能发布一张委托单，你最想完成哪件事？', '选项都是同一类的岛屿委托，任务与图鉴「特长」对应。', [
+    item('garden-flowers', '让庭园盆花快快长大', { specialties: { '栽培': 1 } }),
+    item('water-basin', '让水盆一直清润有水', { specialties: { '滋润': 1 } }),
+    item('campfire', '把火堆安全地点起来', { specialties: { '点火': 1 } }),
+    item('wooden-crate', '用木箱搭出新角落', { specialties: { '建造': 1, '工匠': 1 } }),
+    item('skyland-flowers', '飞到空岛采一束花', { specialties: { '飞翔': 1 } }),
+    item('speaker', '用音箱把派对带热', { specialties: { 'DJ': 1, '带动气氛': 1 } }),
+  ]),
+  one('supply-rack', '工具架备品', '工具架还缺一格，你会先补哪样备品？', '选项都是岛屿维护时会用到的工具或补给。', [
+    item('wall-mounted-tools', '墙上工具组', { favorites: { '建设': 3 }, specialties: { '伐木': 1, '工匠': 1 } }),
+    item('windmill-kit', '风力发电套组', { favorites: { '风': 2, '机械': 1, '旋转': 2 }, specialties: { '发电': 1 } }),
+    item('cleaning-supplies', '清洁套组', { favorites: { '整洁': 3 }, specialties: { '擦亮': 1 } }),
+    item('garbage-bags', '垃圾袋', { favorites: { '垃圾': 3 }, specialties: { '回收利用': 1 } }),
+    item('big-storage-box', '大收纳箱', { favorites: { '容器': 3 }, specialties: { '收纳': 1, '收藏家': 1 } }),
+    item('first-aid-kit', '急救箱', { favorites: { '疗愈': 3 } }),
+  ]),
+  one('party-decorations', '派对装饰箱', '今晚要办派对，只挑一种装饰，你先拿哪样？', '这一页都是能挂上、摆上或点亮派对的装饰。', [
+    item('party-bunting', '派对壁饰', { favorites: { '缤纷': 2, '象征': 1 }, specialties: { '开派对': 1 } }),
+    item('balloons', '气球', { favorites: { '缤纷': 2, '圆润': 1, '摇摆': 1 } }),
+    item('party-popper', '彩花炮', { favorites: { '缤纷': 1, '热闹': 2 }, specialties: { '爆炸': 1, '乱撒': 1 } }),
+    item('mirror-ball', '镜面球', { favorites: { '闪亮': 2, '旋转': 2, '音乐': 1 }, specialties: { '带动气氛': 1 } }),
+    item('cube-light', '发光方块', { favorites: { '闪亮': 2 }, specialties: { '发光': 1 } }),
+    item('decorative-cloth', '装饰布', { favorites: { '布艺': 3 } }),
+  ]),
+  one('shop-signs', '店铺招牌街', '逛街时，哪块店铺招牌最能让你走进去？', '这里全是 Pokopia 的店铺招牌，只比较店的气质。', [
+    item('gift-shop-sign', '礼品店招牌', { favorites: { '象征': 3 }, specialties: { '交易': 1 } }),
+    item('supermarket-sign', '超市招牌', { favorites: { '共享': 1, '热闹': 1 } }),
+    item('restaurant-sign', '餐厅招牌', { favorites: { '美食': 3 }, specialties: { '贪吃鬼': 1 } }),
+    item('cycle-shop-sign', '自行车店招牌', { favorites: { '运动': 2, '交通工具': 1 } }),
+    item('caf-sign', '咖啡店招牌', { favorites: { '文字': 1, '观赏': 1 } }),
+  ]),
+  one('food-counter', '食品柜台', '食品柜台前，你最想先拿哪样尝一口？', '这一页全部都是 Pokopia 里的可吃小食。', [
+    item('honey', '甜甜蜜', { favorites: { '美食': 3 }, specialties: { '采蜜': 1, '贪吃鬼': 1 } }),
+    item('rare-candy', '神奇糖果', { favorites: { '美食': 2, '豪华': 1 }, specialties: { '稀有化': 1 } }),
+    item('recycled-bread', '重制面包', { favorites: { '美食': 1, '垃圾': 1 }, specialties: { '回收利用': 1 } }),
+    item('bread-bowl', '热腾腾浓汤面包', { favorites: { '美食': 3 } }),
+    item('carrot-bread', '红萝卜面包', { favorites: { '美食': 2, '自然': 1 } }),
+  ]),
+  one('vehicles', '交通工具库', '外岛出行只能挑一台载具，你想先试哪台？', '选项全部是 Pokopia 的交通工具。', [
+    item('bike', '自行车', { favorites: { '运动': 2, '交通工具': 2 } }),
+    item('canoe', '独木舟', { favorites: { '交通工具': 2, '海': 1 } }),
+    item('handcar', '采矿车', { favorites: { '交通工具': 1 }, specialties: { '碾压': 1, '重踏': 1 } }),
+    item('cart', '板车', { favorites: { '交通工具': 1, '建设': 1 } }),
+    item('inflatable-boat', '充气船', { favorites: { '交通工具': 2, '水': 1 } }),
+  ]),
+  one('beds', '床铺样品间', '同一间卧室里，你最想睡哪张床？', '只比较床铺的风格、手感与房间气质。', [
+    item('naptime-bed', '瞌睡床铺', { favorites: { '柔软': 2 }, specialties: { '哈欠': 1, '梦岛': 1 } }),
+    item('cute-bed', '可爱床铺', { favorites: { '可爱': 2, '柔软': 1 } }),
+    item('gaming-bed', '电竞床铺', { favorites: { '机械': 2, '玩乐': 1 } }),
+    item('luxury-bed', '豪华床铺', { favorites: { '豪华': 3 } }),
+    item('straw-bed', '干草床铺', { favorites: { '自然': 1, '柔软': 1 } }),
+  ]),
+  one('curio-case', '珍奇展柜', '博物馆展柜只能留一件，你会盯着哪一件看？', '这一页都是可以摆进珍奇展柜的收藏与展品。', [
+    item('sharp-beak', '锐利鸟嘴', { favorites: { '尖尖': 3 }, specialties: { '鉴定': 1 } }),
+    item('fairy-feather', '妖精之翼', { favorites: { '风': 1, '闪亮': 1 }, specialties: { '飞翔': 1 } }),
+    item('mysterious-statue', '谜之石像', { favorites: { '诡异': 2, '奇妙': 1 }, specialties: { '瞬间移动': 1 } }),
+    item('ditto-transform-print', '百变怪变身花纹', { favorites: { '奇妙': 2 }, specialties: { '变身': 1 } }),
+    item('armor-fossil', '盾甲化石', { favorites: { '坚硬': 1, '石制': 1 }, specialties: { '找东西': 1, '鉴定': 1 } }),
+    item('painting-portrait', '肖像画布', { favorites: { '观赏': 2 }, specialties: { '彩绘': 1 } }),
+  ]),
+  one('lighting', '灯具陈列室', '同一排灯具里，你会把哪一盏留到最后？', '选项都是光源，只比较它们照亮房间的方式。', [
+    item('slender-candle', '细长蜡烛', { favorites: { '细长': 3, '火': 1 }, specialties: { '发光': 1 } }),
+    item('luxury-lamp', '豪华灯', { favorites: { '豪华': 2, '闪亮': 2 } }),
+    item('jirachi-lamp', '基拉祈台灯', { favorites: { '象征': 2, '闪亮': 1 }, specialties: { '发光': 1 } }),
+    item('mushroom-lamp', '蘑菇台灯', { favorites: { '奇妙': 2, '自然': 1 } }),
+    item('gaming-light', '电竞灯饰', { favorites: { '机械': 2, '玩乐': 1 } }),
+  ]),
+];
