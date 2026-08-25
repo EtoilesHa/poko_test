@@ -1,4 +1,4 @@
-import type { AnswerWeights, Question, QuestionOption } from './types';
+import type { AnswerWeights, Question, QuestionOption, QuizRoute } from './types';
 import { itemImage } from './item-images';
 
 type SceneItem = { id: string; title: string };
@@ -23,7 +23,14 @@ const item = (
   ...weights,
 });
 
-const one = (id: string, eyebrow: string, prompt: string, hint: string, options: QuestionOption[]): Question => ({
+const one = (
+  id: string,
+  eyebrow: string,
+  prompt: string,
+  hint: string,
+  options: QuestionOption[],
+  requiresAnyRoute?: QuizRoute[],
+): Question => ({
   id,
   eyebrow,
   prompt,
@@ -32,6 +39,13 @@ const one = (id: string, eyebrow: string, prompt: string, hint: string, options:
   maxSelections: 1,
   presentation: 'items',
   options,
+  phase: requiresAnyRoute ? 'branch' : 'core',
+  requiresAnyRoute,
+});
+
+const route = (option: QuestionOption, ...routeTags: QuizRoute[]): QuestionOption => ({
+  ...option,
+  routeTags,
 });
 
 /**
@@ -49,7 +63,7 @@ export const ITEM_QUESTIONS: Question[] = [
     item('skyland-flowers', '空岛的花', { favorites: { '风': 2, '花朵': 1 } }),
     item('mountain-flowers', '岩地的花', { favorites: { '大地': 2, '石制': 1, '花朵': 1 } }),
     item('beautiful-flower', '美丽的花', { favorites: { '缤纷': 2, '观赏': 2, '花朵': 1 } }),
-  ]),
+  ], ['nature']),
   one('sofa-gallery', '沙发陈列室', '同一间客厅里，你会把哪张沙发搬回家？', '选项全部是 Pokopia 的沙发，只比较它们的造型、触感与房间气质。', [
     item('box-sofa', '包厢沙发', { favorites: { '方方': 2, '柔软': 2 } }),
     item('cute-sofa', '可爱沙发', { favorites: { '可爱': 3, '柔软': 1 } }),
@@ -61,7 +75,7 @@ export const ITEM_QUESTIONS: Question[] = [
     item('pop-art-sofa', '新潮沙发', { favorites: { '缤纷': 2, '奇妙': 1, '柔软': 1 } }),
     item('resort-sofa', '度假风情沙发', { favorites: { '水': 1, '疗愈': 2, '柔软': 1 } }),
     item('antique-sofa', '古董沙发', { favorites: { '观赏': 2, '豪华': 1, '柔软': 1 } }),
-  ]),
+  ], ['home']),
   one('storage-furniture', '收纳家具室', '家里只留一件收纳家具，你会先选哪一件？', '选项全部是 Pokopia 的收纳家具：储物柜、收纳箱、宝箱、保险箱或壁挂收纳；不含衣柜与展示家具。', [
     item('antique-chest', '古董储物柜', { favorites: { '观赏': 2, '豪华': 1, '容器': 1 }, specialties: { '收纳': 1 } }),
     item('big-storage-box', '大收纳箱', { favorites: { '容器': 3, '方方': 1 }, specialties: { '收纳': 1 } }),
@@ -75,7 +89,7 @@ export const ITEM_QUESTIONS: Question[] = [
     item('safe', '保险箱', { favorites: { '金属': 2, '坚硬': 1, '容器': 1 }, specialties: { '收藏家': 1 } }),
     item('berry-basket', '树果收纳箱', { favorites: { '容器': 2, '美食': 1, '自然': 1 }, specialties: { '收纳': 1 } }),
     item('wall-storage-box', '壁挂收纳箱', { favorites: { '容器': 2, '方方': 1, '建设': 1 }, specialties: { '收纳': 1 } }),
-  ]),
+  ], ['home']),
   one('hobby-room', '兴趣活动室', '要给兴趣活动室添一件物品，你先摆哪一件？', '这一页都是放进个人兴趣角的娱乐、创作或收藏物件：电脑、音乐设备、玩具、派对摆件与画作。', [
     item('gaming-pc', '电竞电脑', { favorites: { '机械': 3, '玩乐': 2 } }),
     item('cool-electric-guitar', '酷炫电吉他', { favorites: { '金属': 1, '音乐': 3 } }),
@@ -86,7 +100,7 @@ export const ITEM_QUESTIONS: Question[] = [
     item('wobbuffet-wobbler', '果然翁摇摇玩偶', { favorites: { '可爱': 2, '圆润': 1, '摇摆': 1 } }),
     item('mirror-ball', '镜面球', { favorites: { '玻璃': 1, '闪亮': 2, '旋转': 2, '音乐': 1 }, specialties: { '带动气氛': 1 } }),
     item('painting-portrait', '肖像画布', { favorites: { '观赏': 3 }, specialties: { '彩绘': 1 } }),
-  ]),
+  ], ['creative']),
   one('berry-taste', '树果偏好', '果树成熟了，你会先摘哪一颗？', '每颗都是 Pokopia 中的真实树果，并对应图鉴口味。', [
     item('pecha-berry', '桃桃果', { flavors: { '甜': 1 } }),
     item('aspear-berry', '利木果', { flavors: { '酸': 1 } }),
@@ -127,15 +141,15 @@ export const ITEM_QUESTIONS: Question[] = [
     ]),
   ]),
   one('island-errand', '今日待办', '今天在 Pokopia，你最想先完成哪项岛屿日常？', '从宝可梦的请求、岛屿改造到自由互动，每张卡都是游戏里实际会做的事；选你今天最有干劲的一项。', [
-    item('public-seat', '找头顶气泡的伙伴聊聊', { favorites: { '共享': 2, '文字': 1 } }, '先听它说说今天需要什么，再决定怎么帮忙。'),
-    item('simple-bread', '送去一份刚烤好的面包', { favorites: { '美食': 3 }, specialties: { '贪吃鬼': 1 } }, '有些委托需要食物；这次你想先把热腾腾的面包送过去。'),
-    item('wooden-bed', '替想休息的伙伴铺好床', { favorites: { '柔软': 2, '木制': 1 }, specialties: { '哈欠': 1 } }, '它想好好放松一下，你会先把住处布置得舒服些。'),
-    item('water-basin', '把住处调成刚好的湿度', { favorites: { '水': 2, '自然': 1 }, specialties: { '滋润': 2 } }, '浇水、加湿或调整环境，让伙伴住得更自在。'),
-    item('garden-flowers', '把今天的花圃种得更茂盛', { favorites: { '自然': 2, '花朵': 2 }, specialties: { '栽培': 2 } }, '拿起种子和工具，把一角空地慢慢养成花园。'),
-    item('workbench', '收集素材，做一件新家具', { favorites: { '建设': 2, '木制': 1 }, specialties: { '工匠': 2 } }, '把今天采到的材料用在最有成就感的一次手作上。'),
-    item('wooden-crate', '搭好伙伴的新家的一角', { favorites: { '建设': 2, '方方': 1 }, specialties: { '建造': 2, '工匠': 1 } }, '先从一组结构和一件家具开始，让小屋真正像个家。'),
-    item('digital-camera', '和伙伴拍下今天的岛景', { favorites: { '观赏': 2, '象征': 1 } }, '把亲手打造的角落和朋友一起留进相册。'),
-    item('seashell', '去梦幻岛找回今天的素材', { favorites: { '海': 1, '自然': 2 }, specialties: { '找东西': 1 } }, '乘着漂浮气球去探索，看看今天会带回什么。'),
+    route(item('public-seat', '找头顶气泡的伙伴聊聊', { favorites: { '共享': 2, '文字': 1 } }, '先听它说说今天需要什么，再决定怎么帮忙。'), 'social'),
+    route(item('simple-bread', '送去一份刚烤好的面包', { favorites: { '美食': 3 }, specialties: { '贪吃鬼': 1 } }, '有些委托需要食物；这次你想先把热腾腾的面包送过去。'), 'food'),
+    route(item('wooden-bed', '替想休息的伙伴铺好床', { favorites: { '柔软': 2, '木制': 1 }, specialties: { '哈欠': 1 } }, '它想好好放松一下，你会先把住处布置得舒服些。'), 'home'),
+    route(item('water-basin', '把住处调成刚好的湿度', { favorites: { '水': 2, '自然': 1 }, specialties: { '滋润': 2 } }, '浇水、加湿或调整环境，让伙伴住得更自在。'), 'nature'),
+    route(item('garden-flowers', '把今天的花圃种得更茂盛', { favorites: { '自然': 2, '花朵': 2 }, specialties: { '栽培': 2 } }, '拿起种子和工具，把一角空地慢慢养成花园。'), 'nature'),
+    route(item('workbench', '收集素材，做一件新家具', { favorites: { '建设': 2, '木制': 1 }, specialties: { '工匠': 2 } }, '把今天采到的材料用在最有成就感的一次手作上。'), 'craft'),
+    route(item('wooden-crate', '搭好伙伴的新家的一角', { favorites: { '建设': 2, '方方': 1 }, specialties: { '建造': 2, '工匠': 1 } }, '先从一组结构和一件家具开始，让小屋真正像个家。'), 'home', 'craft'),
+    route(item('digital-camera', '和伙伴拍下今天的岛景', { favorites: { '观赏': 2, '象征': 1 } }, '把亲手打造的角落和朋友一起留进相册。'), 'creative'),
+    route(item('seashell', '去梦幻岛找回今天的素材', { favorites: { '海': 1, '自然': 2 }, specialties: { '找东西': 1 } }, '乘着漂浮气球去探索，看看今天会带回什么。'), 'explore'),
   ]),
   one('supply-rack', '工具架备品', '工具架还缺一格，你会先补哪样备品？', '选项都是岛屿维护时会用到的工具或补给。', [
     item('wall-mounted-tools', '墙上工具组', { favorites: { '建设': 3 }, specialties: { '伐木': 1, '工匠': 1 } }),
@@ -144,7 +158,7 @@ export const ITEM_QUESTIONS: Question[] = [
     item('garbage-bags', '垃圾袋', { favorites: { '垃圾': 3 }, specialties: { '回收利用': 1 } }),
     item('big-storage-box', '大收纳箱', { favorites: { '容器': 3 }, specialties: { '收纳': 1, '收藏家': 1 } }),
     item('first-aid-kit', '急救箱', { favorites: { '疗愈': 3 } }),
-  ]),
+  ], ['craft']),
   one('party-decorations', '派对装饰箱', '今晚要办派对，只挑一种装饰，你先拿哪样？', '这一页都是能挂上、摆上或点亮派对的装饰。', [
     item('party-bunting', '派对壁饰', { favorites: { '缤纷': 2, '象征': 1 }, specialties: { '开派对': 1 } }),
     item('balloons', '气球', { favorites: { '缤纷': 2, '圆润': 1, '摇摆': 1 } }),
@@ -152,14 +166,14 @@ export const ITEM_QUESTIONS: Question[] = [
     item('jewel-wall-decoration', '宝石壁饰', { favorites: { '闪亮': 2, '观赏': 2, '缤纷': 1 } }),
     item('cube-light', '发光方块', { favorites: { '闪亮': 2 }, specialties: { '发光': 1 } }),
     item('decorative-cloth', '装饰布', { favorites: { '布艺': 3 } }),
-  ]),
+  ], ['social']),
   one('shop-signs', '店铺招牌街', '逛街时，哪块店铺招牌最能让你走进去？', '这里全是 Pokopia 的店铺招牌，只比较店的气质。', [
     item('gift-shop-sign', '礼品店招牌', { favorites: { '象征': 3 }, specialties: { '交易': 1 } }),
     item('supermarket-sign', '超市招牌', { favorites: { '共享': 1, '热闹': 1 } }),
     item('restaurant-sign', '餐厅招牌', { favorites: { '美食': 3 }, specialties: { '贪吃鬼': 1 } }),
     item('cycle-shop-sign', '自行车店招牌', { favorites: { '运动': 2, '交通工具': 1 } }),
     item('caf-sign', '咖啡店招牌', { favorites: { '文字': 1, '观赏': 1 } }),
-  ]),
+  ], ['social']),
   one('bread-counter', '面包柜台', '烤箱刚出炉，你最想先拿哪一种面包？', '选项全部是 Pokopia 中可直接食用的面包，包含 DLC 的西瓜面包。', [
     item('simple-bread', '普通面包', { favorites: { '美食': 3 } }),
     item('leppa-bread', '辣木果面包', { favorites: { '美食': 2 }, flavors: { '酸': 1 } }),
@@ -168,14 +182,14 @@ export const ITEM_QUESTIONS: Question[] = [
     item('fluffy-bread', '松软面包', { favorites: { '美食': 2, '柔软': 1 }, flavors: { '甜': 1 } }),
     item('bread-bowl', '浓汤面包', { favorites: { '美食': 3 }, flavors: { '辣': 1 } }),
     item('watermelon-bread', '西瓜面包', { favorites: { '美食': 2, '水': 1, '缤纷': 1 }, flavors: { '甜': 1 } }),
-  ]),
+  ], ['food']),
   one('vehicles', '交通工具库', '外岛出行只能挑一台载具，你想先试哪台？', '选项全部是 Pokopia 的交通工具。', [
     item('bike', '自行车', { favorites: { '运动': 2, '交通工具': 2 } }),
     item('canoe', '独木舟', { favorites: { '交通工具': 2, '海': 1 } }),
     item('handcar', '采矿车', { favorites: { '交通工具': 1 }, specialties: { '碾压': 1, '重踏': 1 } }),
     item('cart', '板车', { favorites: { '交通工具': 1, '建设': 1 } }),
     item('inflatable-boat', '充气船', { favorites: { '交通工具': 2, '水': 1 } }),
-  ]),
+  ], ['explore']),
   one('beds', '床铺样品间', '同一间卧室里，你最想睡哪张床？', '这里收全了 Pokopia 图鉴里的 20 张床铺，只比较睡感、材质与卧室气质。', [
     item('antique-bed', '古典床铺', { favorites: { '豪华': 2, '观赏': 2 } }),
     item('berry-bed', '树果床铺', { favorites: { '美食': 1, '自然': 1, '可爱': 1 } }),
@@ -197,7 +211,7 @@ export const ITEM_QUESTIONS: Question[] = [
     item('starry-sky-bed', '星空床铺', { favorites: { '闪亮': 2, '观赏': 2, '奇妙': 1 } }),
     item('straw-bed', '干草床铺', { favorites: { '自然': 1, '柔软': 1 } }),
     item('wooden-bed', '木制床铺', { favorites: { '木制': 3, '自然': 1 } }),
-  ]),
+  ], ['home']),
   one('curio-case', '珍奇展柜', '博物馆展柜只能留一件，你会盯着哪一件看？', '这一页都是可以摆进珍奇展柜的收藏与展品。', [
     item('sharp-beak', '锐利鸟嘴', { favorites: { '尖尖': 3 }, specialties: { '鉴定': 1 } }),
     item('fairy-feather', '妖精之翼', { favorites: { '风': 1, '闪亮': 1 }, specialties: { '飞翔': 1 } }),
@@ -206,7 +220,7 @@ export const ITEM_QUESTIONS: Question[] = [
     item('ditto-transform-print', '百变怪变身花纹', { favorites: { '奇妙': 2 }, specialties: { '变身': 1 } }),
     item('armor-fossil', '盾甲化石', { favorites: { '坚硬': 1, '石制': 1 }, specialties: { '找东西': 1, '鉴定': 1 } }),
     item('sea-glass-fragments', '海玻璃碎片', { favorites: { '玻璃': 2, '海': 1, '闪亮': 1 } }),
-  ]),
+  ], ['creative', 'explore']),
   one('lighting', '灯具陈列室', '同一间房里，你会把哪一盏灯留到最后？', '选项全部是 Pokopia 的室内光源：台灯、吊灯、壁灯、提灯与照明灯。', [
     item('slender-candle', '细长蜡烛', { favorites: { '细长': 3, '火': 1 }, specialties: { '发光': 1 } }),
     item('luxury-lamp', '豪华灯', { favorites: { '豪华': 2, '闪亮': 2 } }),
@@ -226,5 +240,5 @@ export const ITEM_QUESTIONS: Question[] = [
     item('spotlight', '聚光灯', { favorites: { '机械': 2, '观赏': 1, '闪亮': 1 } }),
     item('fluorescent-light', '日光灯', { favorites: { '机械': 2, '整洁': 1, '闪亮': 1 } }),
     item('string-lights', '装饰灯串', { favorites: { '缤纷': 1, '摇摆': 1, '闪亮': 2 } }),
-  ]),
+  ], ['home']),
 ];

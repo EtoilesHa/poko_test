@@ -25,10 +25,21 @@ export type AnswerWeights = {
   specialties?: Record<string, number>;
 };
 
+export type QuizRoute =
+  | 'creative'
+  | 'craft'
+  | 'explore'
+  | 'food'
+  | 'home'
+  | 'nature'
+  | 'social';
+
 export type QuestionOption = AnswerWeights & {
   id: string;
   title: string;
   description?: string;
+  /** Decides which follow-up cards appear. It never changes the score. */
+  routeTags?: QuizRoute[];
   emoji?: string;
   image?: string;
   imageAlt?: string;
@@ -48,6 +59,8 @@ export type Question = {
   maxSelections: number;
   presentation: 'items';
   options: QuestionOption[];
+  phase?: 'core' | 'branch';
+  requiresAnyRoute?: QuizRoute[];
 };
 
 export type ScoreBreakdown = {

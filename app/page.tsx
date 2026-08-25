@@ -6,8 +6,10 @@ import {
   FAVORITE_LABELS,
   FLAVOR_LABELS,
   GROUP_LABELS,
-  QUESTIONS,
+  ROUTE_LABELS,
   SPECIALTY_LABELS,
+  questionsForAnswers,
+  selectedRoutes,
 } from './data/content';
 import { POKEMON } from './data/pokemon.generated';
 import type { QuestionOption } from './data/types';
@@ -36,10 +38,17 @@ export default function Home() {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, QuestionOption[]>>({});
   const [copied, setCopied] = useState(false);
-  const currentQuestion = QUESTIONS[questionIndex];
+  const activeQuestions = useMemo(() => questionsForAnswers(answers), [answers]);
+  const currentQuestion = activeQuestions[questionIndex];
+  const activeAnswers = useMemo(() => {
+    const activeIds = new Set(activeQuestions.map((question) => question.id));
+    return Object.entries(answers)
+      .filter(([questionId]) => activeIds.has(questionId))
+      .flatMap(([, options]) => options);
+  }, [activeQuestions, answers]);
   const ranked = useMemo(
-    () => rankPokemon(POKEMON, Object.values(answers).flat()),
-    [answers],
+    () => rankPokemon(POKEMON, activeAnswers),
+    [activeAnswers],
   );
   const winner = ranked[0];
   const runnersUp = ranked.slice(1, 3);
@@ -47,7 +56,10 @@ export default function Home() {
     ? Math.max(0, winner.score.rawTotal - runnersUp[0].score.rawTotal)
     : 0;
   const selectedOptions = answers[currentQuestion.id] ?? [];
-  const progress = Math.round((questionIndex / QUESTIONS.length) * 100);
+  const progress = Math.round(((questionIndex + 1) / activeQuestions.length) * 100);
+  const branchRouteLabels = (currentQuestion.requiresAnyRoute ?? [])
+    .filter((route) => selectedRoutes(answers).includes(route))
+    .map((route) => ROUTE_LABELS[route]);
   const directMatches = winner ? [
     { label: '喜好', values: winner.score.matchedFavorites },
     { label: '口味', values: winner.score.matchedFlavor ? [winner.score.matchedFlavor] : [] },
@@ -68,20 +80,26 @@ export default function Home() {
     setAnswers((current) => {
       const selected = current[currentQuestion.id] ?? [];
       const isSelected = selected.some((item) => item.id === option.id);
+      let next: Record<string, QuestionOption[]>;
       if (isSelected) {
-        return { ...current, [currentQuestion.id]: selected.filter((item) => item.id !== option.id) };
+        next = { ...current, [currentQuestion.id]: selected.filter((item) => item.id !== option.id) };
+      } else if (currentQuestion.maxSelections === 1) {
+        next = { ...current, [currentQuestion.id]: [option] };
+      } else if (selected.length >= currentQuestion.maxSelections) {
+        return current;
+      } else {
+        next = { ...current, [currentQuestion.id]: [...selected, option] };
       }
-      if (currentQuestion.maxSelections === 1) {
-        return { ...current, [currentQuestion.id]: [option] };
-      }
-      if (selected.length >= currentQuestion.maxSelections) return current;
-      return { ...current, [currentQuestion.id]: [...selected, option] };
+      const activeIds = new Set(questionsForAnswers(next).map((question) => question.id));
+      return Object.fromEntries(
+        Object.entries(next).filter(([questionId]) => activeIds.has(questionId)),
+      );
     });
   }
 
   function nextQuestion() {
     if (selectedOptions.length < currentQuestion.minSelections) return;
-    if (questionIndex === QUESTIONS.length - 1) {
+    if (questionIndex === activeQuestions.length - 1) {
       setStage('result');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -128,12 +146,15 @@ export default function Home() {
       {stage === 'welcome' && <Welcome onBegin={beginQuiz} />}
       {stage === 'quiz' && (
         <section className="quiz-wrap" aria-labelledby="question-title">
-          <div className="progress-row"><span>探测你的 Pokopia 频率</span><strong>{questionIndex + 1} / {QUESTIONS.length}</strong></div>
+          <div className="progress-row"><span>探测你的 Pokopia 频率</span><strong>{questionIndex + 1} / {activeQuestions.length}</strong></div>
           <div className="progress-track" aria-label={`完成度 ${progress}%`}><span style={{ width: `${progress}%` }} /></div>
           <article className="question-card">
             <p className="eyebrow"><span>✦</span>{currentQuestion.eyebrow}</p>
             <h1 id="question-title">{currentQuestion.prompt}</h1>
             <p className="question-hint">{currentQuestion.hint}</p>
+            {currentQuestion.phase === 'branch' && branchRouteLabels.length > 0 && (
+              <p className="branch-note">依据你刚刚选择的「{branchRouteLabels.join('／')}」，这页会继续细分你的图鉴偏好。</p>
+            )}
             <div className="item-option-grid">
               {currentQuestion.options.map((option) => (
                 <button
@@ -157,7 +178,7 @@ export default function Home() {
                 </button>
               ))}
             </div>
-            <div className="question-actions"><button className="text-button" onClick={previousQuestion}>← {questionIndex === 0 ? '返回首页' : '上一题'}</button><button className="primary-button question-next" onClick={nextQuestion} disabled={selectedOptions.length < currentQuestion.minSelections}>{questionIndex === QUESTIONS.length - 1 ? '查看图鉴匹配结果 →' : '下一项 →'}</button></div>
+            <div className="question-actions"><button className="text-button" onClick={previousQuestion}>← {questionIndex === 0 ? '返回首页' : '上一题'}</button><button className="primary-button question-next" onClick={nextQuestion} disabled={selectedOptions.length < currentQuestion.minSelections}>{questionIndex === activeQuestions.length - 1 ? '查看图鉴匹配结果 →' : '下一项 →'}</button></div>
           </article>
         </section>
       )}
@@ -191,7 +212,7 @@ export default function Home() {
               ))}
             </div>
           </section>
-          <aside className="method-note"><span>每张物品卡都是 Pokopia 中实际存在的道具；卡片下方会显示它关联的图鉴喜好、口味、理想环境或特长。稀有的重合标签会有更高区分度。</span><span>结果池已接入 365 条公开图鉴记录：本篇、DLC 海底、活动，以及其中的传说／幻之宝可梦都会正常参与匹配。</span></aside>
+          <aside className="method-note"><span>前几题是所有人都会回答的图鉴基线；后续物品页会根据你的「今日待办」分支出现。没走到的路线不会扣分，也不会从结果池排除任何宝可梦。</span><span>每张物品卡都关联 Pokopia 图鉴标签，稀有的重合标签有更高区分度。结果池始终包含 365 条记录：本篇、DLC 海底、活动，以及其中的传说／幻之宝可梦。</span></aside>
         </section>
       )}
       <footer>Pokémon 与相关名称属于其权利人。本项目为非官方、非商业性质的粉丝趣味测试。</footer>
@@ -207,7 +228,7 @@ function Welcome({ onBegin }: { onBegin: () => void }) {
         <h1>如果你到了<br /><em>宝可梦世界</em>——</h1>
         <p className="hero-lede">从 Pokopia 岛上的真实道具里挑选你会喜欢的东西。每张物品卡都会悄悄连到图鉴标签，最后看看谁和你最同频。</p>
         <button className="primary-button hero-cta" onClick={onBegin}>开始测测看 <span>→</span></button>
-        <p className="hero-meta"><span>15</span> 组同类物品题 · <span>365</span> 位候选搭子 · <span>图鉴</span> 可追溯</p>
+        <p className="hero-meta"><span>3</span> 道图鉴基线题 · <span>分支</span> 专属物品追问 · <span>365</span> 位候选搭子</p>
       </div>
       <div className="hero-scene" aria-hidden="true">
         <div className="cloud cloud-one" /><div className="cloud cloud-two" /><div className="floating-star star-a">✦</div><div className="floating-star star-b">✦</div><div className="floating-star star-c">✦</div>

@@ -1,4 +1,5 @@
 import { ITEM_QUESTIONS } from './item-questions';
+import type { Question, QuestionOption, QuizRoute } from './types';
 
 /** Display wording mirrors the public Pokopia catalogue's preference labels. */
 export const FAVORITE_LABELS: Record<string, string> = {
@@ -32,7 +33,44 @@ export const SPECIALTY_LABELS: Record<string, string> = {
   '贪吃鬼': '贪吃鬼', '稀有化': '稀有化', '梦岛': '梦岛', '哈欠': '哈欠', '乱撒': '乱撒',
 };
 
-export const QUESTIONS = ITEM_QUESTIONS;
+export const ROUTE_LABELS: Record<QuizRoute, string> = {
+  creative: '创作与收藏',
+  craft: '手作与建造',
+  explore: '出门探索',
+  food: '食物与招待',
+  home: '安家与休息',
+  nature: '自然与栽培',
+  social: '邻居与热闹',
+};
+
+const CORE_QUESTIONS = ITEM_QUESTIONS.filter((question) => question.phase !== 'branch');
+const BRANCH_QUESTIONS = ITEM_QUESTIONS.filter((question) => question.phase === 'branch');
+
+export type QuizAnswers = Record<string, QuestionOption[]>;
+
+export function selectedRoutes(answers: QuizAnswers): QuizRoute[] {
+  return [...new Set(
+    Object.values(answers)
+      .flat()
+      .flatMap((option) => option.routeTags ?? []),
+  )];
+}
+
+/**
+ * Everyone answers the same preference baseline first. Later item groups only
+ * appear when the "今日待办" choice makes that group meaningful.
+ */
+export function questionsForAnswers(answers: QuizAnswers): Question[] {
+  const routes = new Set(selectedRoutes(answers));
+  return [
+    ...CORE_QUESTIONS,
+    ...BRANCH_QUESTIONS.filter((question) =>
+      question.requiresAnyRoute?.some((route) => routes.has(route)),
+    ),
+  ];
+}
+
+export const QUESTIONS = questionsForAnswers({});
 
 export const GROUP_LABELS = {
   base: '主图鉴', basin: '海底图鉴', event: '活动图鉴', unique: '传说 / 幻之',
