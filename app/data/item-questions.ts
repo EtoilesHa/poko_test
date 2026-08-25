@@ -126,13 +126,16 @@ export const ITEM_QUESTIONS: Question[] = [
       { id: 'slender-candle', title: '细长蜡烛' },
     ]),
   ]),
-  one('island-errand', '岛屿委托单', '今天只能发布一张委托单，你最想完成哪件事？', '选项都是同一类的岛屿委托，任务与图鉴「特长」对应。', [
-    item('garden-flowers', '让庭园盆花快快长大', { specialties: { '栽培': 1 } }),
-    item('water-basin', '让水盆一直清润有水', { specialties: { '滋润': 1 } }),
-    item('campfire', '把火堆安全地点起来', { specialties: { '点火': 1 } }),
-    item('wooden-crate', '用木箱搭出新角落', { specialties: { '建造': 1, '工匠': 1 } }),
-    item('skyland-flowers', '飞到空岛采一束花', { specialties: { '飞翔': 1 } }),
-    item('speaker', '用音箱把派对带热', { specialties: { 'DJ': 1, '带动气氛': 1 } }),
+  one('island-errand', '今日待办', '今天在 Pokopia，你最想先完成哪项岛屿日常？', '从宝可梦的请求、岛屿改造到自由互动，每张卡都是游戏里实际会做的事；选你今天最有干劲的一项。', [
+    item('public-seat', '找头顶气泡的伙伴聊聊', { favorites: { '共享': 2, '文字': 1 } }, '先听它说说今天需要什么，再决定怎么帮忙。'),
+    item('simple-bread', '送去一份刚烤好的面包', { favorites: { '美食': 3 }, specialties: { '贪吃鬼': 1 } }, '有些委托需要食物；这次你想先把热腾腾的面包送过去。'),
+    item('wooden-bed', '替想休息的伙伴铺好床', { favorites: { '柔软': 2, '木制': 1 }, specialties: { '哈欠': 1 } }, '它想好好放松一下，你会先把住处布置得舒服些。'),
+    item('water-basin', '把住处调成刚好的湿度', { favorites: { '水': 2, '自然': 1 }, specialties: { '滋润': 2 } }, '浇水、加湿或调整环境，让伙伴住得更自在。'),
+    item('garden-flowers', '把今天的花圃种得更茂盛', { favorites: { '自然': 2, '花朵': 2 }, specialties: { '栽培': 2 } }, '拿起种子和工具，把一角空地慢慢养成花园。'),
+    item('workbench', '收集素材，做一件新家具', { favorites: { '建设': 2, '木制': 1 }, specialties: { '工匠': 2 } }, '把今天采到的材料用在最有成就感的一次手作上。'),
+    item('wooden-crate', '搭好伙伴的新家的一角', { favorites: { '建设': 2, '方方': 1 }, specialties: { '建造': 2, '工匠': 1 } }, '先从一组结构和一件家具开始，让小屋真正像个家。'),
+    item('digital-camera', '和伙伴拍下今天的岛景', { favorites: { '观赏': 2, '象征': 1 } }, '把亲手打造的角落和朋友一起留进相册。'),
+    item('seashell', '去梦幻岛找回今天的素材', { favorites: { '海': 1, '自然': 2 }, specialties: { '找东西': 1 } }, '乘着漂浮气球去探索，看看今天会带回什么。'),
   ]),
   one('supply-rack', '工具架备品', '工具架还缺一格，你会先补哪样备品？', '选项都是岛屿维护时会用到的工具或补给。', [
     item('wall-mounted-tools', '墙上工具组', { favorites: { '建设': 3 }, specialties: { '伐木': 1, '工匠': 1 } }),
