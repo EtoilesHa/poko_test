@@ -45,6 +45,47 @@ export const ROUTE_LABELS: Record<QuizRoute, string> = {
 
 const CORE_QUESTIONS = ITEM_QUESTIONS.filter((question) => question.phase !== 'branch');
 const BRANCH_QUESTIONS = ITEM_QUESTIONS.filter((question) => question.phase === 'branch');
+const BRANCH_QUESTION_LIMIT = 6;
+
+function stableQuestionOrder(question: Question, signature: string): number {
+  let hash = 2166136261;
+  for (const character of `${signature}:${question.id}`) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function selectVariedBranchQuestions(
+  questions: Question[],
+  signature: string,
+): Question[] {
+  const remaining = [...questions];
+  const selected: Question[] = [];
+  const seenOptionIds = new Set<string>();
+
+  while (remaining.length > 0 && selected.length < BRANCH_QUESTION_LIMIT) {
+    remaining.sort((left, right) => {
+      const specificity = (left.requiresAnyRoute?.length ?? 0) - (right.requiresAnyRoute?.length ?? 0);
+      if (specificity) return specificity;
+
+      const freshOptions = (question: Question) => question.options.filter(
+        (option) => !option.id.endsWith('-other') && !seenOptionIds.has(option.id),
+      ).length;
+      const freshness = freshOptions(right) - freshOptions(left);
+      return freshness || stableQuestionOrder(left, signature) - stableQuestionOrder(right, signature);
+    });
+
+    const question = remaining.shift();
+    if (!question) break;
+    question.options
+      .filter((option) => !option.id.endsWith('-other'))
+      .forEach((option) => seenOptionIds.add(option.id));
+    selected.push(question);
+  }
+
+  return selected;
+}
 
 export type QuizAnswers = Record<string, QuestionOption[]>;
 
@@ -62,11 +103,18 @@ export function selectedRoutes(answers: QuizAnswers): QuizRoute[] {
  */
 export function questionsForAnswers(answers: QuizAnswers): Question[] {
   const routes = new Set(selectedRoutes(answers));
+  const coreIds = new Set(CORE_QUESTIONS.map((question) => question.id));
+  const signature = Object.entries(answers)
+    .filter(([questionId]) => coreIds.has(questionId))
+    .flatMap(([questionId, options]) => options.map((option) => `${questionId}:${option.id}`))
+    .sort()
+    .join('|');
+  const eligibleBranchQuestions = BRANCH_QUESTIONS.filter((question) =>
+    question.requiresAnyRoute?.some((route) => routes.has(route)),
+  );
   return [
     ...CORE_QUESTIONS,
-    ...BRANCH_QUESTIONS.filter((question) =>
-      question.requiresAnyRoute?.some((route) => routes.has(route)),
-    ),
+    ...selectVariedBranchQuestions(eligibleBranchQuestions, signature),
   ];
 }
 

@@ -10,6 +10,7 @@
 
 # testing
 /coverage
+.nyc_output/
 
 # next.js
 /.next/
@@ -18,16 +19,21 @@
 
 # misc
 .DS_Store
+Thumbs.db
+Desktop.ini
 *.pem
+*.tsbuildinfo
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
 # local environment
 .env*
+!.env.example
 
 # deployment and generated files
 .vercel
@@ -42,3 +48,13 @@ next-env.d.ts
 /data/raw/
 /data/pokemon.generated.json
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# editor and operating-system metadata
+.idea/
+.vscode/
+*.swp
+*.swo

@@ -52,6 +52,8 @@ export default function Home() {
   );
   const winner = ranked[0];
   const runnersUp = ranked.slice(1, 3);
+  const isAllOther = activeAnswers.length === activeQuestions.length
+    && activeAnswers.every((option) => option.id.endsWith('-other'));
   const leadOverRunner = winner && runnersUp[0]
     ? Math.max(0, winner.score.rawTotal - runnersUp[0].score.rawTotal)
     : 0;
@@ -117,7 +119,9 @@ export default function Home() {
 
   async function shareResult() {
     if (!winner) return;
-    const shareText = winner.shareLine + '\n来测测你在 Pokopia 会是什么宝可梦！';
+    const shareText = isAllOther
+      ? '你是来找茬的吧？(¬_¬)\n来测测你在 Pokopia 会是什么宝可梦！'
+      : winner.shareLine + '\n来测测你在 Pokopia 会是什么宝可梦！';
     try {
       if (navigator.share) {
         await navigator.share({ title: 'Pokopia 命定宝可梦测试', text: shareText, url: window.location.href });
@@ -173,8 +177,8 @@ export default function Home() {
                         </span>
                       ))}
                     </span>
-                  ) : <span className="item-image-wrap"><img src={option.image} alt={option.imageAlt ?? ''} /></span>}
-                  <span className="item-copy"><strong>{option.title}</strong><small>{option.description}</small><span className="item-links"><b>对应图鉴</b>{optionLinks(option).map((label) => <i key={label}>{label}</i>)}</span></span>
+                  ) : <span className={`item-image-wrap${option.image ? '' : ' is-other'}`}>{option.image ? <img src={option.image} alt={option.imageAlt ?? ''} /> : <b>…</b>}</span>}
+                  <span className="item-copy"><strong>{option.title}</strong><small>{option.description}</small>{optionLinks(option).length > 0 && <span className="item-links"><b>对应图鉴</b>{optionLinks(option).map((label) => <i key={label}>{label}</i>)}</span>}</span>
                 </button>
               ))}
             </div>
@@ -182,7 +186,16 @@ export default function Home() {
           </article>
         </section>
       )}
-      {stage === 'result' && winner && (
+      {stage === 'result' && isAllOther && (
+        <section className="result-wrap troll-result" aria-labelledby="result-title">
+          <p className="eyebrow result-eyebrow"><span>✦</span>匹配失败得很成功</p>
+          <h1 id="result-title">你是来找茬的吧？</h1>
+          <div className="troll-face" aria-label="无语颜文字">(¬_¬)</div>
+          <p className="troll-copy">十道题全部“都不太想”，图鉴分析员已经放下笔了。</p>
+          <div className="result-actions"><button className="primary-button" onClick={shareResult}>{copied ? '已复制分享文案！' : '分享我的倔强 ↗'}</button><button className="secondary-button" onClick={beginQuiz}>认真再测一次</button></div>
+        </section>
+      )}
+      {stage === 'result' && winner && !isAllOther && (
         <section className="result-wrap" aria-labelledby="result-title">
           <p className="eyebrow result-eyebrow"><span>✦</span>匹配完成</p>
           <h1 id="result-title">你在 Pokopia 最像——</h1>
@@ -228,7 +241,7 @@ function Welcome({ onBegin }: { onBegin: () => void }) {
         <h1>如果你到了<br /><em>宝可梦世界</em>——</h1>
         <p className="hero-lede">从 Pokopia 岛上的真实道具里挑选你会喜欢的东西。每张物品卡都会悄悄连到图鉴标签，最后看看谁和你最同频。</p>
         <button className="primary-button hero-cta" onClick={onBegin}>开始测测看 <span>→</span></button>
-        <p className="hero-meta"><span>3</span> 道图鉴基线题 · <span>分支</span> 专属物品追问 · <span>365</span> 位候选搭子</p>
+        <p className="hero-meta"><span>4</span> 道图鉴基线题 · <span>约 10 题</span> 完整分支 · <span>365</span> 位候选搭子</p>
       </div>
       <div className="hero-scene" aria-hidden="true">
         <div className="cloud cloud-one" /><div className="cloud cloud-two" /><div className="floating-star star-a">✦</div><div className="floating-star star-b">✦</div><div className="floating-star star-c">✦</div>

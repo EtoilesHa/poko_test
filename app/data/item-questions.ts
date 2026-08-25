@@ -38,7 +38,17 @@ const one = (
   minSelections: 1,
   maxSelections: 1,
   presentation: 'items',
-  options,
+  options: [
+    ...options,
+    {
+      id: `${id}-other`,
+      title: '其他 / 都不太想',
+      description: '现有选项没有说中我，这题不计入图鉴标签。',
+      routeTags: id === 'island-errand'
+        ? ['creative', 'craft', 'explore', 'food', 'home', 'nature', 'social']
+        : undefined,
+    },
+  ],
   phase: requiresAnyRoute ? 'branch' : 'core',
   requiresAnyRoute,
 });
@@ -53,7 +63,7 @@ const route = (option: QuestionOption, ...routeTags: QuizRoute[]): QuestionOptio
  * Pokédex labels represented by that item, and are shown below every card.
  */
 export const ITEM_QUESTIONS: Question[] = [
-  one('flower-bed', '小屋花圃', '要在门口种一丛花，你最想选哪一种？', '没有盆花；这里收齐了 Pokopia 的野生与各地花朵，只比较花的样子与生长地。', [
+  one('flower-bed', '小屋花圃', '推开房门，你希望觉得门口开的是什么花？', '只凭第一眼的心动来选。', [
     item('wildflowers', '草地的花', { favorites: { '自然': 2, '花朵': 2 }, specialties: { '采蜜': 1 } }),
     item('cute-flowers', '可爱的花', { favorites: { '可爱': 2, '柔软': 1, '花朵': 1 } }),
     item('elegant-flower', '优雅的花', { favorites: { '豪华': 1, '观赏': 2, '花朵': 1 } }),
@@ -64,7 +74,7 @@ export const ITEM_QUESTIONS: Question[] = [
     item('mountain-flowers', '岩地的花', { favorites: { '大地': 2, '石制': 1, '花朵': 1 } }),
     item('beautiful-flower', '美丽的花', { favorites: { '缤纷': 2, '观赏': 2, '花朵': 1 } }),
   ], ['nature']),
-  one('sofa-gallery', '沙发陈列室', '同一间客厅里，你会把哪张沙发搬回家？', '选项全部是 Pokopia 的沙发，只比较它们的造型、触感与房间气质。', [
+  one('sofa-gallery', '客厅落座', '忙完一天回家，你会想一头陷进哪张沙发？', '窗外天色渐暗，选一张最能让你卸下疲惫的沙发。', [
     item('box-sofa', '包厢沙发', { favorites: { '方方': 2, '柔软': 2 } }),
     item('cute-sofa', '可爱沙发', { favorites: { '可爱': 3, '柔软': 1 } }),
     item('chic-sofa', '雅致沙发', { favorites: { '豪华': 2, '柔软': 1, '观赏': 1 } }),
@@ -75,8 +85,8 @@ export const ITEM_QUESTIONS: Question[] = [
     item('pop-art-sofa', '新潮沙发', { favorites: { '缤纷': 2, '奇妙': 1, '柔软': 1 } }),
     item('resort-sofa', '度假风情沙发', { favorites: { '水': 1, '疗愈': 2, '柔软': 1 } }),
     item('antique-sofa', '古董沙发', { favorites: { '观赏': 2, '豪华': 1, '柔软': 1 } }),
-  ], ['home']),
-  one('storage-furniture', '收纳家具室', '家里只留一件收纳家具，你会先选哪一件？', '选项全部是 Pokopia 的收纳家具：储物柜、收纳箱、宝箱、保险箱或壁挂收纳；不含衣柜与展示家具。', [
+  ], ['home', 'social']),
+  one('storage-furniture', '秘密收纳', '搬进小屋的第一晚，你会把珍贵家当收进哪件家具？', '里面也许会放素材、纪念品或不想让邻居发现的小秘密。', [
     item('antique-chest', '古董储物柜', { favorites: { '观赏': 2, '豪华': 1, '容器': 1 }, specialties: { '收纳': 1 } }),
     item('big-storage-box', '大收纳箱', { favorites: { '容器': 3, '方方': 1 }, specialties: { '收纳': 1 } }),
     item('big-treasure-chest', '大宝箱', { favorites: { '豪华': 1, '容器': 2 }, specialties: { '找东西': 1, '收藏家': 1 } }),
@@ -89,8 +99,8 @@ export const ITEM_QUESTIONS: Question[] = [
     item('safe', '保险箱', { favorites: { '金属': 2, '坚硬': 1, '容器': 1 }, specialties: { '收藏家': 1 } }),
     item('berry-basket', '树果收纳箱', { favorites: { '容器': 2, '美食': 1, '自然': 1 }, specialties: { '收纳': 1 } }),
     item('wall-storage-box', '壁挂收纳箱', { favorites: { '容器': 2, '方方': 1, '建设': 1 }, specialties: { '收纳': 1 } }),
-  ], ['home']),
-  one('hobby-room', '兴趣活动室', '要给兴趣活动室添一件物品，你先摆哪一件？', '这一页都是放进个人兴趣角的娱乐、创作或收藏物件：电脑、音乐设备、玩具、派对摆件与画作。', [
+  ], ['home', 'craft', 'creative']),
+  one('hobby-room', '只属于你的角落', '外面下起雨，你决定窝在家里消磨时间，你会选择？', '没有待办，也没有人催你，选一件能让时间悄悄溜走的物品。', [
     item('gaming-pc', '电竞电脑', { favorites: { '机械': 3, '玩乐': 2 } }),
     item('cool-electric-guitar', '酷炫电吉他', { favorites: { '金属': 1, '音乐': 3 } }),
     item('audio-mixer', '音响混音器', { favorites: { '机械': 1, '音乐': 2 }, specialties: { 'DJ': 1 } }),
@@ -100,15 +110,15 @@ export const ITEM_QUESTIONS: Question[] = [
     item('wobbuffet-wobbler', '果然翁摇摇玩偶', { favorites: { '可爱': 2, '圆润': 1, '摇摆': 1 } }),
     item('mirror-ball', '镜面球', { favorites: { '玻璃': 1, '闪亮': 2, '旋转': 2, '音乐': 1 }, specialties: { '带动气氛': 1 } }),
     item('painting-portrait', '肖像画布', { favorites: { '观赏': 3 }, specialties: { '彩绘': 1 } }),
-  ], ['creative']),
-  one('berry-taste', '树果偏好', '果树成熟了，你会先摘哪一颗？', '每颗都是 Pokopia 中的真实树果，并对应图鉴口味。', [
+  ], ['creative', 'social']),
+  one('berry-taste', '树果成熟', '树果们都熟了，你会先摘哪一颗？', '不用猜效果，跟着你最熟悉、最喜欢的味道选。', [
     item('pecha-berry', '桃桃果', { flavors: { '甜': 1 } }),
     item('aspear-berry', '利木果', { flavors: { '酸': 1 } }),
     item('leppa-berry', '苹野果', { flavors: { '辣': 1 } }),
     item('rawst-berry', '莓莓果', { flavors: { '苦': 1 } }),
     item('chesto-berry', '零余果', { flavors: { '涩': 1 } }),
   ]),
-  one('garden-scenes', '庭院一日', '今天的庭院，你最想过成哪一种场景？', '每张卡都包含天气、地景和三件 Pokopia 布置物；选择你最想待上一整天的那一套。', [
+  one('garden-scenes', '庭院一日', '你最满意的住处大概会是一种什么样的布置组合？', '从天气、地景到灯光都已经布置好，选一个你愿意待到天黑的地方。', [
     item('wildflowers', '晴天草坪野餐', { environments: { '明亮': 1 }, favorites: { '自然': 2, '花朵': 2, '木制': 1 } }, '天气：晴朗微风 · 布置：草地花、庭园椅、派对壁饰', [
       { id: 'wildflowers', title: '草地花' },
       { id: 'garden-chair', title: '庭园椅' },
@@ -139,9 +149,34 @@ export const ITEM_QUESTIONS: Question[] = [
       { id: 'string-lights', title: '装饰灯串' },
       { id: 'slender-candle', title: '细长蜡烛' },
     ]),
+    item('water-basin', '雾气缭绕的露天温泉', { environments: { '温暖': 1 }, favorites: { '水': 2, '火': 1, '石制': 1, '疗愈': 3 }, specialties: { '滋润': 1 } }, '天气：微凉薄雾 · 布置：温泉水池、出水口、暖光提灯', [
+      { id: 'water-basin', title: '温泉水池' },
+      { id: 'hot-spring-spout', title: '出水口' },
+      { id: 'lantern', title: '暖光提灯' },
+    ]),
+    item('seabed-flowers', '幽蓝海底玻璃屋', { environments: { '湿润': 1 }, favorites: { '水': 3, '海': 2, '玻璃': 1, '自然': 1 } }, '环境：幽蓝海底 · 布置：海底花、幻彩珊瑚、贝壳壁灯', [
+      { id: 'seabed-flowers', title: '海底花' },
+      { id: 'colorful-corals', title: '幻彩珊瑚' },
+      { id: 'shell-lamp', title: '贝壳壁灯' },
+    ]),
+    item('heat-rock', '熔岩映红的岩石居所', { environments: { '干燥': 1 }, favorites: { '火': 3, '石制': 2, '大地': 2, '坚硬': 1 }, specialties: { '点火': 1 } }, '环境：炽热熔岩地带 · 布置：蓄热岩石、岩浆岩、旺盛火堆', [
+      { id: 'heat-rock', title: '蓄热岩石' },
+      { id: 'lava-rock', title: '岩浆岩' },
+      { id: 'campfire', title: '旺盛火堆' },
+    ]),
+    item('office-cabinet', '灯火通明的城市公寓', { environments: { '明亮': 1 }, favorites: { '机械': 2, '金属': 1, '整洁': 2, '共享': 1, '文字': 1 } }, '环境：繁华城市夜景 · 布置：办公收纳柜、日光灯、公共座椅', [
+      { id: 'office-cabinet', title: '办公收纳柜' },
+      { id: 'fluorescent-light', title: '明亮日光灯' },
+      { id: 'public-seat', title: '公共座椅' },
+    ]),
+    item('gaming-light', '电流闪烁的未来机房', { environments: { '明亮': 1 }, favorites: { '机械': 3, '闪亮': 2, '金属': 1, '玩乐': 2 }, specialties: { '发电': 1, '发光': 1 } }, '环境：电气能源区 · 布置：电竞灯饰、电脑套组、电竞椅', [
+      { id: 'gaming-light', title: '电竞灯饰' },
+      { id: 'gaming-pc', title: '电脑套组' },
+      { id: 'gaming-chair', title: '电竞椅' },
+    ]),
   ]),
-  one('island-errand', '今日待办', '今天在 Pokopia，你最想先完成哪项岛屿日常？', '从宝可梦的请求、岛屿改造到自由互动，每张卡都是游戏里实际会做的事；选你今天最有干劲的一项。', [
-    route(item('public-seat', '找头顶气泡的伙伴聊聊', { favorites: { '共享': 2, '文字': 1 } }, '先听它说说今天需要什么，再决定怎么帮忙。'), 'social'),
+  one('island-errand', '今天从哪里开始', '晨雾刚散，岛上的伙伴们也陆续醒来——你最想先去做什么？', '这会决定你今天走向岛屿的哪一边，也会带来不同的后续经历。', [
+    route(item('public-seat', '找小伙伴聊聊', { favorites: { '共享': 2, '文字': 1 } }, '先听它说说今天需要什么，再决定怎么帮忙。'), 'social'),
     route(item('simple-bread', '送去一份刚烤好的面包', { favorites: { '美食': 3 }, specialties: { '贪吃鬼': 1 } }, '有些委托需要食物；这次你想先把热腾腾的面包送过去。'), 'food'),
     route(item('wooden-bed', '替想休息的伙伴铺好床', { favorites: { '柔软': 2, '木制': 1 }, specialties: { '哈欠': 1 } }, '它想好好放松一下，你会先把住处布置得舒服些。'), 'home'),
     route(item('water-basin', '把住处调成刚好的湿度', { favorites: { '水': 2, '自然': 1 }, specialties: { '滋润': 2 } }, '浇水、加湿或调整环境，让伙伴住得更自在。'), 'nature'),
@@ -151,30 +186,30 @@ export const ITEM_QUESTIONS: Question[] = [
     route(item('digital-camera', '和伙伴拍下今天的岛景', { favorites: { '观赏': 2, '象征': 1 } }, '把亲手打造的角落和朋友一起留进相册。'), 'creative'),
     route(item('seashell', '去梦幻岛找回今天的素材', { favorites: { '海': 1, '自然': 2 }, specialties: { '找东西': 1 } }, '乘着漂浮气球去探索，看看今天会带回什么。'), 'explore'),
   ]),
-  one('supply-rack', '工具架备品', '工具架还缺一格，你会先补哪样备品？', '选项都是岛屿维护时会用到的工具或补给。', [
+  one('supply-rack', '出发前的工具架', '今天需要继续建(dang)设(niu)小(zuo)岛(ma)，你会带上什么工具？', '想想今天可能遇到的状况，带上最让你安心或最想派上用场的东西。', [
     item('wall-mounted-tools', '墙上工具组', { favorites: { '建设': 3 }, specialties: { '伐木': 1, '工匠': 1 } }),
     item('windmill-kit', '风力发电套组', { favorites: { '风': 2, '机械': 1, '旋转': 2 }, specialties: { '发电': 1 } }),
     item('cleaning-supplies', '清洁套组', { favorites: { '整洁': 3 }, specialties: { '擦亮': 1 } }),
     item('garbage-bags', '垃圾袋', { favorites: { '垃圾': 3 }, specialties: { '回收利用': 1 } }),
     item('big-storage-box', '大收纳箱', { favorites: { '容器': 3 }, specialties: { '收纳': 1, '收藏家': 1 } }),
     item('first-aid-kit', '急救箱', { favorites: { '疗愈': 3 } }),
-  ], ['craft']),
-  one('party-decorations', '派对装饰箱', '今晚要办派对，只挑一种装饰，你先拿哪样？', '这一页都是能挂上、摆上或点亮派对的装饰。', [
+  ], ['craft', 'nature']),
+  one('party-decorations', '今晚有派对', '用什么来装扮派对？', '它会成为今晚最醒目的布置，也悄悄定下整场派对的气氛。', [
     item('party-bunting', '派对壁饰', { favorites: { '缤纷': 2, '象征': 1 }, specialties: { '开派对': 1 } }),
     item('balloons', '气球', { favorites: { '缤纷': 2, '圆润': 1, '摇摆': 1 } }),
     item('party-popper', '彩花炮', { favorites: { '缤纷': 1, '热闹': 2 }, specialties: { '爆炸': 1, '乱撒': 1 } }),
     item('jewel-wall-decoration', '宝石壁饰', { favorites: { '闪亮': 2, '观赏': 2, '缤纷': 1 } }),
     item('cube-light', '发光方块', { favorites: { '闪亮': 2 }, specialties: { '发光': 1 } }),
     item('decorative-cloth', '装饰布', { favorites: { '布艺': 3 } }),
-  ], ['social']),
-  one('shop-signs', '店铺招牌街', '逛街时，哪块店铺招牌最能让你走进去？', '这里全是 Pokopia 的店铺招牌，只比较店的气质。', [
+  ], ['social', 'food']),
+  one('shop-signs', '傍晚的店铺街', '你沿着亮起灯的街道慢慢走，边上有好多店铺，你会最想走进？', '先别看购物清单，选一家让你很想推门进去逛逛的店。', [
     item('gift-shop-sign', '礼品店招牌', { favorites: { '象征': 3 }, specialties: { '交易': 1 } }),
     item('supermarket-sign', '超市招牌', { favorites: { '共享': 1, '热闹': 1 } }),
     item('restaurant-sign', '餐厅招牌', { favorites: { '美食': 3 }, specialties: { '贪吃鬼': 1 } }),
     item('cycle-shop-sign', '自行车店招牌', { favorites: { '运动': 2, '交通工具': 1 } }),
     item('caf-sign', '咖啡店招牌', { favorites: { '文字': 1, '观赏': 1 } }),
-  ], ['social']),
-  one('bread-counter', '面包柜台', '烤箱刚出炉，你最想先拿哪一种面包？', '选项全部是 Pokopia 中可直接食用的面包，包含 DLC 的西瓜面包。', [
+  ], ['social', 'explore']),
+  one('bread-counter', '刚出炉的香气', '面包店的铃铛轻轻一响，热气扑面而来——你会拿起哪一个？', '它还暖着，想象掰开第一口时的味道。', [
     item('simple-bread', '普通面包', { favorites: { '美食': 3 } }),
     item('leppa-bread', '辣木果面包', { favorites: { '美食': 2 }, flavors: { '酸': 1 } }),
     item('carrot-bread', '红萝卜面包', { favorites: { '美食': 2, '自然': 1 }, flavors: { '辣': 1 } }),
@@ -183,14 +218,15 @@ export const ITEM_QUESTIONS: Question[] = [
     item('bread-bowl', '浓汤面包', { favorites: { '美食': 3 }, flavors: { '辣': 1 } }),
     item('watermelon-bread', '西瓜面包', { favorites: { '美食': 2, '水': 1, '缤纷': 1 }, flavors: { '甜': 1 } }),
   ], ['food']),
-  one('vehicles', '交通工具库', '外岛出行只能挑一台载具，你想先试哪台？', '选项全部是 Pokopia 的交通工具。', [
+  one('vehicles', '向外岛出发', '地图上出现了一座从没去过的小岛，必须要使用载具前往，你会选择？', '不必追求最快，选一种最像你心目中“出发”的方式。', [
     item('bike', '自行车', { favorites: { '运动': 2, '交通工具': 2 } }),
     item('canoe', '独木舟', { favorites: { '交通工具': 2, '海': 1 } }),
     item('handcar', '采矿车', { favorites: { '交通工具': 1 }, specialties: { '碾压': 1, '重踏': 1 } }),
     item('cart', '板车', { favorites: { '交通工具': 1, '建设': 1 } }),
     item('inflatable-boat', '充气船', { favorites: { '交通工具': 2, '水': 1 } }),
-  ], ['explore']),
-  one('beds', '床铺样品间', '同一间卧室里，你最想睡哪张床？', '这里收全了 Pokopia 图鉴里的 20 张床铺，只比较睡感、材质与卧室气质。', [
+    item('balloons', '飘飘球牵引的漂浮气球', { favorites: { '交通工具': 2, '风': 2, '摇摆': 1 }, specialties: { '飞翔': 2, '梦岛': 1 } }, '让飘飘球牵引气球升空，从风里慢慢飘向远处的小岛。'),
+  ], ['explore', 'craft']),
+  one('beds', '岛上的第一场梦', '入夜了，窗外只剩虫鸣，你想钻进哪张床结束今天？', '选一张让你觉得能睡得很沉，或会做一场好梦的床。', [
     item('antique-bed', '古典床铺', { favorites: { '豪华': 2, '观赏': 2 } }),
     item('berry-bed', '树果床铺', { favorites: { '美食': 1, '自然': 1, '可爱': 1 } }),
     item('cushion-bed', '靠垫床铺', { favorites: { '柔软': 3, '可爱': 1 } }),
@@ -212,16 +248,16 @@ export const ITEM_QUESTIONS: Question[] = [
     item('straw-bed', '干草床铺', { favorites: { '自然': 1, '柔软': 1 } }),
     item('wooden-bed', '木制床铺', { favorites: { '木制': 3, '自然': 1 } }),
   ], ['home']),
-  one('curio-case', '珍奇展柜', '博物馆展柜只能留一件，你会盯着哪一件看？', '这一页都是可以摆进珍奇展柜的收藏与展品。', [
+  one('curio-case', '闭馆后的展柜', '博物馆即将熄灯，最后一个展柜里有什么让你迟迟不愿离开？', '也许是它的光泽、故事，或一种说不清的神秘感。', [
     item('sharp-beak', '锐利鸟嘴', { favorites: { '尖尖': 3 }, specialties: { '鉴定': 1 } }),
     item('fairy-feather', '妖精之翼', { favorites: { '风': 1, '闪亮': 1 }, specialties: { '飞翔': 1 } }),
     item('rare-candy', '神奇糖果', { favorites: { '豪华': 2, '奇妙': 1 }, specialties: { '稀有化': 1 } }),
     item('mysterious-statue', '谜之石像', { favorites: { '诡异': 2, '奇妙': 1 }, specialties: { '瞬间移动': 1 } }),
-    item('ditto-transform-print', '百变怪变身花纹', { favorites: { '奇妙': 2 }, specialties: { '变身': 1 } }),
+    item('light-clay', '散发微光的神秘黏土', { favorites: { '奇妙': 2, '闪亮': 1, '大地': 1 }, specialties: { '鉴定': 1 } }),
     item('armor-fossil', '盾甲化石', { favorites: { '坚硬': 1, '石制': 1 }, specialties: { '找东西': 1, '鉴定': 1 } }),
-    item('sea-glass-fragments', '海玻璃碎片', { favorites: { '玻璃': 2, '海': 1, '闪亮': 1 } }),
+    item('jewel-wall-decoration', '来历不明的宝石壁饰', { favorites: { '豪华': 2, '闪亮': 2, '观赏': 1 }, specialties: { '收藏家': 1 } }),
   ], ['creative', 'explore']),
-  one('lighting', '灯具陈列室', '同一间房里，你会把哪一盏灯留到最后？', '选项全部是 Pokopia 的室内光源：台灯、吊灯、壁灯、提灯与照明灯。', [
+  one('lighting', '入夜之后', '岛上停电了片刻，你会点亮哪一盏灯？', '想象它照在墙面和家具上的光，以及房间随之变成的样子。', [
     item('slender-candle', '细长蜡烛', { favorites: { '细长': 3, '火': 1 }, specialties: { '发光': 1 } }),
     item('luxury-lamp', '豪华灯', { favorites: { '豪华': 2, '闪亮': 2 } }),
     item('jirachi-lamp', '基拉祈台灯', { favorites: { '象征': 2, '闪亮': 1 }, specialties: { '发光': 1 } }),
@@ -240,5 +276,119 @@ export const ITEM_QUESTIONS: Question[] = [
     item('spotlight', '聚光灯', { favorites: { '机械': 2, '观赏': 1, '闪亮': 1 } }),
     item('fluorescent-light', '日光灯', { favorites: { '机械': 2, '整洁': 1, '闪亮': 1 } }),
     item('string-lights', '装饰灯串', { favorites: { '缤纷': 1, '摇摆': 1, '闪亮': 2 } }),
+  ], ['home', 'craft']),
+  one('picnic-kit', '说走就走的野餐', '伙伴突然敲门邀你去野餐，出门前你顺手抱走了什么？', '不用把东西准备齐全，只选一件最能让这趟小出游变得开心的物品。', [
+    item('berry-basket', '一篮树果', { favorites: { '美食': 2, '自然': 1, '共享': 1 } }),
+    item('simple-bread', '刚出炉的面包', { favorites: { '美食': 3, '共享': 1 } }),
+    item('decorative-cloth', '漂亮的野餐布', { favorites: { '布艺': 2, '缤纷': 1, '观赏': 1 } }),
+    item('digital-camera', '记录风景的相机', { favorites: { '观赏': 2, '象征': 1 } }),
+    item('garden-chair', '坐得舒服的庭园椅', { favorites: { '自然': 1, '木制': 1, '疗愈': 2 } }),
+  ], ['food', 'nature', 'social', 'explore']),
+  one('building-material', '珍稀改造素材', '你发现一块独立的空地，哪种素材会成为它的风格核心？', '不考虑获取难度，想象你亲手搭建完成后，那里会在阳光或夜色下怎样发亮。', [
+    item('sea-glass-fragments', '虹彩海玻璃', { favorites: { '玻璃': 3, '海': 1, '闪亮': 2 } }),
+    item('colorful-corals', '幻彩珊瑚', { favorites: { '缤纷': 3, '水': 1, '海': 2, '自然': 1 } }),
+    item('light-clay', '会发光的轻黏土', { favorites: { '大地': 2, '奇妙': 2, '闪亮': 1 }, specialties: { '建造': 1 } }),
+    item('glowing-mushrooms', '夜光蘑菇群', { favorites: { '自然': 2, '奇妙': 2, '闪亮': 1 } }),
+    item('fairy-feather', '妖精之羽', { favorites: { '风': 2, '柔软': 1, '闪亮': 2 }, specialties: { '飞翔': 1 } }),
+    item('armor-fossil', '远古盾甲化石', { favorites: { '石制': 2, '坚硬': 2, '奇妙': 1 }, specialties: { '鉴定': 1 } }),
+    item('jewel-wall-decoration', '切面宝石', { favorites: { '豪华': 2, '闪亮': 3, '观赏': 1 } }),
+    item('heat-rock', '蓄热熔岩石', { favorites: { '火': 2, '石制': 2, '大地': 1 }, specialties: { '点火': 1 } }),
+    item('ditto-transform-print', '百变纹理薄片', { favorites: { '奇妙': 3, '缤纷': 1 }, specialties: { '变身': 1 } }),
+    item('small-log', '保留天然纹理的原木结构', { favorites: { '木制': 3, '自然': 2 }, specialties: { '伐木': 1, '建造': 1 } }),
+    item('light-brown-rock', '温润的浅色岩石', { favorites: { '石制': 3, '大地': 2, '观赏': 1 }, specialties: { '建造': 1 } }),
+    item('iron-stand', '线条利落的黑铁构件', { favorites: { '金属': 3, '坚硬': 2, '机械': 1 }, specialties: { '工匠': 1 } }),
+    item('decorative-cloth', '随风垂落的织物帷幕', { favorites: { '布艺': 3, '柔软': 2, '摇摆': 1 } }),
+  ], ['craft', 'nature', 'creative']),
+  one('favorite-drink-corner', '忙里偷闲', '忙了一天了，你闻着不同方向飘来的香气，会走向哪个角落歇脚？', '接下来的十分钟完全属于你，选一个让脚步自然慢下来的地方。', [
+    item('caf-sign', '凉风吹进来的安静咖啡角', { environments: { '凉爽': 1 }, favorites: { '文字': 1, '观赏': 1, '疗愈': 2 } }, '咖啡香混着窗边的凉风，适合一个人慢慢放空。'),
+    item('berry-table-lamp', '洒满阳光的树果甜点角', { environments: { '明亮': 1 }, favorites: { '美食': 2, '可爱': 1, '自然': 1 }, flavors: { '甜': 1 } }, '明亮的桌边摆着刚摘下的树果和甜点。'),
+    item('restaurant-sign', '暖灯下的热闹餐桌', { environments: { '温暖': 1 }, favorites: { '美食': 2, '热闹': 2, '共享': 1 } }, '食物的热气和伙伴们的说笑声一起涌过来。'),
+    item('water-basin', '水汽弥漫的清凉饮水处', { environments: { '湿润': 1 }, favorites: { '水': 2, '自然': 1, '疗愈': 1 } }, '空气里带着水汽，连呼吸都变得清润。'),
+    item('campfire', '烤着面包的暖暖篝火边', { environments: { '温暖': 1 }, favorites: { '火': 2, '热闹': 1, '自然': 1 }, specialties: { '点火': 1 } }, '柴火噼啪作响，还飘着一点焦香。'),
+    item('wildflowers', '青草与花香包围的明亮露台', { environments: { '明亮': 1 }, favorites: { '自然': 3, '花朵': 2, '风': 1 } }, '阳光晒暖草叶，风里全是新鲜的花草气味。'),
+    item('glowing-mushrooms', '雨后蘑菇香的湿润树洞', { environments: { '湿润': 1 }, favorites: { '自然': 2, '奇妙': 2, '闪亮': 1 } }, '潮湿泥土和蘑菇的气息，让这里像一座秘密小屋。'),
+    item('heat-rock', '晒得暖烘烘的干燥岩台', { environments: { '干燥': 1 }, favorites: { '石制': 2, '大地': 2, '火': 1 } }, '岩石还留着白天的热度，空气中有太阳晒过土地的味道。'),
+    item('cave-rock', '飘着草药香的昏暗洞窟', { environments: { '昏暗': 1 }, favorites: { '石制': 2, '诡异': 1, '奇妙': 1, '疗愈': 1 } }, '微光照着岩壁，角落传来安静而陌生的草药香。'),
+    item('icy-rock', '薄荷气息的凉爽冰岩边', { environments: { '凉爽': 1 }, favorites: { '闪亮': 2, '石制': 1, '疗愈': 1 } }, '冰岩透出清冽凉意，像闻到一口薄荷味的风。'),
+    item('seashore-flowers', '带着咸味海风的岸边花亭', { environments: { '湿润': 1 }, favorites: { '海': 2, '水': 1, '花朵': 2, '自然': 1 } }, '花香里混着海水的咸味，远处浪声一阵阵靠近。'),
+  ], ['food', 'home']),
+  one('island-souvenir', '带回家的故事', '你背着满满一包发现返航，你会最喜欢哪一件？', '它不一定最值钱，却会让你每次看到都想起今天的旅途。', [
+    item('seashell', '海边捡到的贝壳', { favorites: { '海': 2, '自然': 1, '观赏': 1 }, specialties: { '找东西': 1 } }),
+    item('rare-candy', '难得一见的糖果', { favorites: { '奇妙': 1, '豪华': 1, '美食': 2 }, specialties: { '稀有化': 1 } }),
+    item('painting-portrait', '亲手完成的画', { favorites: { '观赏': 3, '象征': 1 }, specialties: { '彩绘': 1 } }),
+    item('sea-glass-fragments', '闪光的海玻璃', { favorites: { '玻璃': 2, '闪亮': 1, '海': 1 } }),
+    item('book', '写满线索的旧探险手记', { favorites: { '知识': 2, '文字': 3, '象征': 1 }, specialties: { '找东西': 1 } }),
+    item('fairy-feather', '被风送到手边的妖精之羽', { favorites: { '风': 2, '柔软': 1, '闪亮': 2, '奇妙': 1 }, specialties: { '飞翔': 1 } }),
+    item('armor-fossil', '从岩层里找到的远古化石', { favorites: { '石制': 2, '坚硬': 2, '大地': 1 }, specialties: { '找东西': 1, '鉴定': 2 } }),
+    item('extravagant-flowers', '夹在旅记里的稀有压花', { favorites: { '花朵': 3, '自然': 2, '观赏': 1 }, specialties: { '栽培': 1 } }),
+  ], ['explore', 'creative', 'food']),
+  one('quiet-seat', '只听见风的时候', '忙碌的声音渐渐远去，整座岛只剩风声和水声——你会在哪里停下来？', '可以泡进水里、靠近火光，也可以直接躺上草地；选一种最能让你忘记时间的休息方式。', [
+    item('wildflowers', '柔软的草地', { favorites: { '自然': 3, '柔软': 2, '大地': 1 } }),
+    item('water-basin', '清凉的浅水里', { favorites: { '水': 3, '自然': 1, '疗愈': 2 }, specialties: { '滋润': 1 } }),
+    item('heat-rock', '暖烘烘的露天温泉', { environments: { '温暖': 1 }, favorites: { '水': 2, '火': 1, '石制': 1, '疗愈': 3 } }, '被热气、岩石和柔和灯光包围，慢慢泡到完全不想动。', [
+      { id: 'water-basin', title: '温泉水池' },
+      { id: 'heat-rock', title: '蓄热岩石' },
+      { id: 'lantern', title: '暖光提灯' },
+    ]),
+    item('stone-bench', '能看远处的石凳', { favorites: { '石制': 2, '自然': 1, '观赏': 1 } }),
+    item('log-chair', '树荫下的原木椅', { favorites: { '木制': 2, '自然': 2 } }),
+    item('soft-seat', '室内柔软座椅', { favorites: { '柔软': 3, '疗愈': 1 } }),
+    item('public-seat', '邻居会路过的长椅', { favorites: { '共享': 2, '热闹': 1, '文字': 1 } }),
+    item('beach-sand', '海风旁的沙地', { favorites: { '海': 2, '水': 1, '自然': 1 } }),
+    item('campfire', '噼啪作响的篝火边', { environments: { '温暖': 1 }, favorites: { '火': 2, '自然': 1, '疗愈': 1 }, specialties: { '点火': 1 } }),
+    item('skyland-flowers', '风吹过的空岛高处', { favorites: { '风': 3, '花朵': 1, '自然': 1, '观赏': 2 } }),
+  ], ['nature']),
+  one('creative-blank-wall', '创作分支 · 空白墙面', '活动室要添点新东西，准备放点什么？', '这题从表达方式确认你的创作偏好：同样是“好看”，有人想亲手画，有人更在意光、声音或收藏故事。', [
+    item('painting-portrait', '画一幅只属于这里的壁画', { favorites: { '观赏': 3, '缤纷': 1 }, specialties: { '彩绘': 2 } }),
+    item('string-lights', '用灯串画出夜晚的轮廓', { favorites: { '闪亮': 3, '缤纷': 1, '摇摆': 1 }, specialties: { '发光': 1 } }),
+    item('cool-electric-guitar', '搭一个随时能演奏的小舞台', { favorites: { '音乐': 3, '热闹': 1, '金属': 1 } }),
+    item('decorative-bookshelf', '摆满旅行手记与灵感书', { favorites: { '知识': 2, '文字': 2, '木制': 1 } }),
+    item('shop-display-case', '做成珍藏作品展示墙', { favorites: { '观赏': 2, '玻璃': 1, '豪华': 1 }, specialties: { '收藏家': 2 } }),
+    item('garden-flowers', '摆一片让房间呼吸的绿植', { environments: { '明亮': 1 }, favorites: { '自然': 3, '花朵': 1, '疗愈': 1 }, specialties: { '栽培': 1 } }),
+    item('fluffy-bread', '放一篮随时能吃的松软点心', { favorites: { '美食': 2, '柔软': 2 }, flavors: { '甜': 1 } }),
+    item('soft-seat', '添一个能窝很久的舒适座位', { favorites: { '柔软': 3, '疗愈': 2 } }),
+    item('digital-camera', '留一台记录灵感和日常的相机', { favorites: { '观赏': 2, '象征': 1, '玩乐': 1 } }),
+  ], ['creative']),
+  one('craft-broken-bridge', '建造分支 · 断掉的小桥', '暴雨冲坏了通往果园的小桥，伙伴们都看向你——你会先怎么处理？', '这题不只看你爱不爱建造，也看你习惯从结构、材料、工具、动力还是整理开始。', [
+    item('wall-mounted-tools', '摊开工具，先检查损坏结构', { favorites: { '建设': 3, '整洁': 1 }, specialties: { '工匠': 2 } }),
+    item('small-log', '去林边挑选结实的新木料', { favorites: { '木制': 3, '自然': 1 }, specialties: { '伐木': 2 } }),
+    item('light-brown-rock', '用岩石重新加固桥墩', { favorites: { '石制': 3, '坚硬': 2, '大地': 1 }, specialties: { '建造': 1 } }),
+    item('windmill-kit', '装上动力装置方便升降', { favorites: { '机械': 2, '旋转': 2, '风': 1 }, specialties: { '发电': 2 } }),
+    item('cleaning-supplies', '先清走淤泥，把现场理干净', { favorites: { '整洁': 3, '水': 1 }, specialties: { '擦亮': 1 } }),
+  ], ['craft']),
+  one('explore-crossroads', '探索分支 · 雾中的岔路', '地图走到尽头，雾里出现五条没有标记的小路，你会循着什么继续前进？', '路线没有标准答案，你依赖的线索会暴露自己真正享受的探索方式。', [
+    item('wildflowers', '跟着从未见过的花一路走', { favorites: { '自然': 3, '花朵': 2 }, specialties: { '找东西': 1 } }),
+    item('seashell', '顺着远处传来的潮声走', { favorites: { '海': 3, '水': 1, '自然': 1 }, specialties: { '找东西': 1 } }),
+    item('cave-rock', '钻进透出微光的岩洞', { environments: { '昏暗': 1 }, favorites: { '石制': 2, '诡异': 2, '奇妙': 1 } }),
+    item('lantern', '循着沿途留下的微弱灯光走', { favorites: { '火': 1, '金属': 1, '奇妙': 1 }, specialties: { '发光': 2, '找东西': 1 } }),
+    item('digital-camera', '爬上高处先观察并记录地形', { favorites: { '观赏': 2, '知识': 1, '风': 1 } }),
+  ], ['explore']),
+  one('food-surprise-guest', '招待分支 · 突然来客', '傍晚有伙伴饿着肚子敲门，你最想端出怎样的一份招待？', '比起单纯选口味，这题也会确认你偏爱温暖、分享、精致、自然还是新奇。', [
+    item('simple-bread', '一篮刚烤好的朴素面包', { favorites: { '美食': 3, '共享': 2 }, flavors: { '甜': 1 } }),
+    item('bread-bowl', '能让身体暖起来的浓汤面包', { environments: { '温暖': 1 }, favorites: { '美食': 3, '疗愈': 2 }, flavors: { '辣': 1 } }),
+    item('berry-basket', '把今天采到的树果全摆出来', { favorites: { '美食': 2, '自然': 2, '缤纷': 1 }, flavors: { '甜': 1 } }),
+    item('watermelon-bread', '端出让人惊呼的西瓜面包', { favorites: { '美食': 2, '奇妙': 1, '缤纷': 2 }, flavors: { '甜': 1 } }),
+    item('recycled-bread', '用剩余食材做一份新料理', { favorites: { '美食': 2, '垃圾': 1 }, flavors: { '苦': 1 }, specialties: { '回收利用': 2 } }),
+  ], ['food']),
+  one('home-rainy-night', '安家分支 · 暴雨夜', '夜里忽然风雨大作，你会先把小屋里的哪个角落照顾好？', '你最先保护的地方，往往比“喜欢哪件家具”更能说明家的意义。', [
+    item('wooden-bed', '把床铺整理得温暖干燥', { favorites: { '木制': 2, '柔软': 3, '整洁': 1 }, specialties: { '哈欠': 1 } }),
+    item('plain-sofa', '在沙发边留出大家的位置', { favorites: { '自然': 1, '木制': 1, '柔软': 2, '共享': 2 } }),
+    item('wall-storage-box', '收好容易受潮的小物件', { favorites: { '容器': 3, '整洁': 2 }, specialties: { '收纳': 2 } }),
+    item('lantern', '提一盏灯检查每扇门窗', { favorites: { '火': 1, '金属': 1, '整洁': 1 }, specialties: { '发光': 2 } }),
+    item('campfire', '守着炉火给淋湿的伙伴取暖', { environments: { '温暖': 1 }, favorites: { '火': 2, '疗愈': 2, '热闹': 1 }, specialties: { '点火': 1 } }),
   ], ['home']),
+  one('nature-young-sprout', '自然分支 · 新芽的请求', '你发现花圃里有一株小苗没什么精神，第一反应会为它做什么？', '照顾自然也有不同方式：给水、换土、调光、陪伴观察，或让生态自己帮忙。', [
+    item('water-basin', '先给它补足清晨的水分', { favorites: { '水': 3, '自然': 2 }, specialties: { '滋润': 2 } }),
+    item('light-brown-rock', '重新整理松软而稳固的土壤', { favorites: { '大地': 3, '石制': 1, '自然': 1 }, specialties: { '栽培': 2 } }),
+    item('skyland-flowers', '移到风与阳光更合适的位置', { environments: { '明亮': 1 }, favorites: { '风': 2, '花朵': 2, '自然': 1 } }),
+    item('honey', '请会采蜜的伙伴来花圃帮忙', { favorites: { '自然': 2, '美食': 1, '共享': 1 }, specialties: { '采蜜': 2 } }),
+    item('garden-chair', '坐在旁边慢慢观察它的变化', { favorites: { '自然': 2, '疗愈': 2, '木制': 1 }, specialties: { '栽培': 1 } }),
+  ], ['nature']),
+  one('social-new-neighbor', '邻居分支 · 新伙伴搬来', '一位有点拘谨的新邻居刚搬上岛，你会怎样欢迎它？', '同样是友善，有人用食物、聊天、礼物、音乐或实际行动表达。', [
+    item('simple-bread', '送去还热着的面包', { favorites: { '美食': 2, '共享': 2, '疗愈': 1 } }),
+    item('public-seat', '邀请它坐下慢慢聊天', { favorites: { '共享': 3, '文字': 1, '热闹': 1 } }),
+    item('party-bunting', '悄悄挂起欢迎它的彩旗', { favorites: { '缤纷': 2, '象征': 2, '热闹': 1 }, specialties: { '开派对': 1 } }),
+    item('speaker', '放一首能打破拘谨的音乐', { favorites: { '音乐': 3, '热闹': 2 }, specialties: { '带动气氛': 2 } }),
+    item('wooden-crate', '直接帮它把新家布置起来', { favorites: { '建设': 2, '木制': 1, '共享': 2 }, specialties: { '建造': 1, '工匠': 1 } }),
+  ], ['social']),
 ];

@@ -30,7 +30,7 @@ def download(url: str) -> bytes:
 
 def item_ids() -> tuple[str, ...]:
     source = QUESTION_PATH.read_text(encoding="utf-8")
-    return tuple(dict.fromkeys(re.findall(r"item\('([^']+)'", source)))
+    return tuple(dict.fromkeys(re.findall(r"(?:item\('|\{ id: ')([^']+)'", source)))
 
 
 def main() -> int:
